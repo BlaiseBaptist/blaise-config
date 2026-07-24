@@ -17,19 +17,18 @@ exec wl-paste --type image --watch cliphist store
 set $background "/home/blaise/Pictures/RustFerrisBg.jpg"
 output * bg $background fill
 
-set $monitor "HP Inc. HP U28 4K HDR 1CR20606PP"
-output eDP-1 resolution 1920x1080 position 0,0
-output $monitor mode  3840x2160@59.997Hz
+set $left_screen "HKC OVERSEAS LIMITED GN02 00000000"
+set $right_screen "HKC OVERSEAS LIMITED 27E1QA 0000000000001"
+output $right_screen mode  2560x1440@144.0000Hz
+output $left_screen mode 1920x1080@240.299Hz
+output $left_screen position 0 0
 exec waylock
 
-workspace 1 output eDP-1
-workspace 4 output eDP-1
+workspace 1 output $left_screen
+workspace 3 output $left_screen
 
-workspace 3 output $monitor
-workspace 5 output $monitor
-
-workspace 2 output DP-2
-workspace 6 output DP-2
+workspace 2 output $right_screen
+workspace 4 output $right_screen
 
 assign [app_id="zen" ] workspace 2
 assign [class="steam" ] workspace 3
