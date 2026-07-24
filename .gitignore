@@ -1,0 +1,14 @@
+*
+!.gitignore
+!helix
+!helix/**
+helix/runtime
+helix/runtime/**
+!foot
+!foot/**
+!sway
+!sway/**
+!rofi
+!rofi/**
+!waybar
+!waybar/**
