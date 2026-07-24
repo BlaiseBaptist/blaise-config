@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+"""Formatter for sway/i3 config files. Reads config on stdin, writes formatted config on stdout."""
+import sys
+
+
+def format_config(text: str) -> str:
+    out = []
+    depth = 0
+    continuing = False
+
+    for raw in text.split("\n"):
+        line = raw.strip()
+
+        if line == "":
+            if out and out[-1] != "":
+                out.append("")
+            continue
+
+        this_depth = depth - 1 if line.startswith("}") else depth
+        if continuing:
+            this_depth += 1
+
+        out.append("\t" * this_depth + line)
+
+        continuing = line.endswith("\\")
+        depth += line.count("{") - line.count("}")
+        depth = max(depth, 0)
+
+    while out and out[-1] == "":
+        out.pop()
+
+    return "\n".join(out) + "\n"
+
+
+def main() -> None:
+    text = sys.stdin.read()
+    sys.stdout.write(format_config(text))
+
+
+if __name__ == "__main__":
+    main()

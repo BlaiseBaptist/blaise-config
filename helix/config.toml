@@ -1,0 +1,11 @@
+theme = "everforest_dark"
+# fallback = "everforest_dark"
+# [theme]
+# dark = "everforest_dark_hard"
+# light = "everforest_light_medium"
+[editor]
+true-color = true
+auto-format = true
+[editor.soft-wrap]
+enable = true
+

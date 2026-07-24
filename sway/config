@@ -1,0 +1,191 @@
+exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+exec systemctl --user start wayvnc.service
+
+set $mod Mod4
+set $left h
+set $down j
+set $up k
+set $right l
+set $term foot
+exec_always export TERMINAL=/usr/bin/foot
+set $menu rofi -show combi
+bindsym $mod+Shift+v exec cliphist list | rofi -dmenu | cliphist decode | wl-copy
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec keyd-application-mapper
+exec wl-paste --type text --watch cliphist store
+exec wl-paste --type image --watch cliphist store
+set $background "/home/blaise/Pictures/RustFerrisBg.jpg"
+output * bg $background fill
+
+set $monitor "HP Inc. HP U28 4K HDR 1CR20606PP"
+output eDP-1 resolution 1920x1080 position 0,0
+output $monitor mode  3840x2160@59.997Hz
+exec waylock
+
+workspace 1 output eDP-1
+workspace 4 output eDP-1
+
+workspace 3 output $monitor
+workspace 5 output $monitor
+
+workspace 2 output DP-2
+workspace 6 output DP-2
+
+assign [app_id="zen" ] workspace 2
+assign [class="steam" ] workspace 3
+assign [class="discord" ] workspace 4
+assign [class="rviz2" ] workspace 5
+assign [class="Gazebo GUI" ] workspace 6
+
+exec swayidle  \
+	timeout 310 'swaymsg "output * dpms off"' \
+	resume 'swaymsg "output * dpms off" && swaymsg "output * dpms on"' \
+	before-sleep 'waylock'
+bindsym $mod+f9 exec waylock
+# bindswitch --locked lid:on exec waylock; swaymsg "output eDP-1 dpms off"
+bindswitch --locked lid:on swaymsg "output eDP-1 dpms off"
+bindswitch --locked lid:off swaymsg "output eDP-1 dpms on"
+
+input type:touchpad {
+	dwt enabled
+	tap disabled
+	natural_scroll enabled
+	middle_emulation enabled
+	click_method clickfinger
+}
+
+input type:pointer {
+	dwt enabled
+	tap disabled
+	pointer_accel -0.2
+	accel_profile "flat"
+}
+input "2:10:TPPS/2_Elan_TrackPoint" {
+	scroll_method on_button_down
+	scroll_button BTN_MIDDLE
+	scroll_factor 0.5
+	scroll_button_lock enabled
+}
+
+input type:keyboard {
+	xkb_options caps:escape
+	xkb_layout "us"
+}
+bindsym $mod+Return exec $term
+
+bindsym $mod+q kill
+
+bindsym $mod+Space exec $menu
+
+floating_modifier $mod normal
+
+bindsym $mod+Shift+c reload
+
+bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+0 workspace number 10
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+bindsym $mod+Shift+0 move container to workspace number 10
+
+bindsym $mod+Ctrl+Shift+Left  move workspace to output left
+bindsym $mod+Ctrl+Shift+Right move workspace to output right
+bindsym $mod+Ctrl+Shift+Up move workspace to output up
+bindsym $mod+Ctrl+Shift+Down move workspace to output down
+
+bindsym $mod+Ctrl+Shift+h  move workspace to output left
+bindsym $mod+Ctrl+Shift+l move workspace to output right
+bindsym $mod+Ctrl+Shift+k move workspace to output up
+bindsym $mod+Ctrl+Shift+j move workspace to output down
+bindsym $mod+b splith
+bindsym $mod+v splitv
+
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+bindsym $mod+f fullscreen
+
+bindsym $mod+Shift+space floating toggle
+
+bindsym $mod+d focus mode_toggle
+
+bindsym $mod+a focus parent
+bindsym $mod+Shift+minus move scratchpad
+
+bindsym $mod+minus scratchpad show
+mode "resize" {
+	bindsym $left resize shrink width 10px
+	bindsym $down resize grow height 10px
+	bindsym $up resize shrink height 10px
+	bindsym $right resize grow width 10px
+
+	bindsym Left resize shrink width 10px
+	bindsym Down resize grow height 10px
+	bindsym Up resize shrink height 10px
+	bindsym Right resize grow width 10px
+
+	bindsym Return mode "default"
+	bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+bindsym --locked XF86AudioMute exec pactl set-sink-mute \@DEFAULT_SINK@ toggle
+bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume \@DEFAULT_SINK@ -5%
+bindsym --locked XF86AudioRaiseVolume exec pactl set-sink-volume \@DEFAULT_SINK@ +5%
+bindsym --locked XF86AudioMicMute exec pactl set-source-mute \@DEFAULT_SOURCE@ toggle
+bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
+bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
+# bindsym Print exec grim
+bindsym Print exec grim -g "$(slurp)"
+bindsym $mod+F7 exec grim -g "$(slurp -d)" ~/Pictures/screenshot.png
+bindsym $mod+F1 exec playerctl previous
+bindsym $mod+F2 exec playerctl position 1-
+bindsym $mod+F3 exec playerctl play-pause
+bindsym $mod+F4 exec playerctl position 1+
+bindsym $mod+F5 exec playerctl next
+
+bar {
+	mode invisible
+	status_command waybar
+}
+exec_always nm-applet --indicator
+
+include /etc/sway/config.d/*
+
+for_window [app_id="virtualbox"] floating enable
+for_window [class="VirtualBox Machine"] floating enable
+
+for_window [class="VirtualBox Machine" title=".*Seamless.*"] floating enable, border none, tearing enable

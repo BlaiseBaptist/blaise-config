@@ -1,0 +1,141 @@
+[[language]]
+file-types = ["m"]
+language-servers = ["matlab-ls"]
+name = "matlab"
+scope = "source.m"
+[language-server.matlab-ls]
+args = ["--stdio"]
+command = "matlab-langserver"
+[[language]]
+name = "bash"
+file-types = [{ glob = "**/sway/config" }, { glob = "**/i3/config" }]
+comment-token = "#"
+formatter = { command = "/home/blaise/.config/helix/sway-fmt" }
+auto-format = true
+[[language]]
+auto-format = true
+language-servers = ["efm-xml"]
+file-types = ["xml", "urdf", "sdf", "xacro"]
+name = "xml"
+[language-server.efm-xml.config]
+documentFormatting = true
+languages = { xml = [
+  { lintCommand = "xmllint --noout --valid -", lintStdin = true, lintFormats = [
+    "%f:%l: %m",
+  ] },
+  { formatCommand = "xmllint --format -", formatStdin = true },
+] }
+[language-server.efm-xml]
+command = "efm-langserver"
+[[language]]
+auto-format = true
+comment-token = "#"
+file-types = ["riscv", "asm", "s"]
+formatter = { command = "awk", args = [
+  "{ gsub(/^[ \t]+/, \"\"); if ($0 ~ /^[A-Za-z0-9_.]+:|^$/) { print $0; next } match($0, /[^ \t]+/); m = substr($0, RSTART, RLENGTH); r = substr($0, RSTART + RLENGTH); gsub(/^[ \t]+/, \"\", r); n = split(r, c, \"#\"); args = c[1]; gsub(/[ \t]+$/, \"\", args); printf \"\\t%%-8s %%-24s %%s\\n\", m, args, (n > 1 ? \"#\" c[2] : \"\") }",
+] }
+injection-regex = "asm"
+language-servers = ["asm-lsp"]
+name = "riscv"
+roots = []
+scope = "source.asm"
+[[grammar]]
+name = "riscv"
+source = { git = "https://github.com/omeyenburg/tree-sitter-riscv.git", rev = "main" }
+[language-server.asm-lsp]
+command = "asm-lsp"
+[[language]]
+auto-format = true
+formatter = { command = "verible-verilog-format", args = [
+  "--stdin_name",
+  "%{buffer_name}",
+  "-",
+] }
+language-servers = ["verible-ls"]
+name = "verilog"
+[language-server.verible-ls]
+args = ["--rules_config_search"]
+command = "verible-verilog-ls"
+[[language]]
+auto-format = true
+language-servers = ["jdtls"]
+name = "java"
+roots = ["pom.xml", ".git"]
+[language-server.jdtls]
+command = "jdtls"
+# Use a specific path for your workspace data
+args = ["-data", "/Users/blaise/.cache/jdtls/workspace"]
+[language-server.jdtls.config]
+java = { project = { outputPath = "target/classes" } }
+[[language]]
+formatter = { command = "rustfmt" }
+name = "rust"
+[[language]]
+auto-format = true
+name = "c"
+roots = ["compile_commands.json", ".git"]
+[[language]]
+auto-format = true
+formatter = { command = "deno", args = ["fmt", "-", "--ext", "md"] }
+language-servers = ["mdpls"]
+name = "markdown"
+[language-server.mdpls]
+command = "mdpls"
+config = { markdown.preview.auto = true }
+[[language]]
+comment-tokens = "#"
+file-types = ["uml"]
+indent = { tab-width = 2, unit = "  " }
+name = "uml"
+scope = "text.uml"
+[[grammer]]
+name = "uml"
+source = { git = "https://github.com/ahlinc/tree-sitter-plantuml.git" }
+[[language]]
+auto-format = true
+language-servers = ["pylsp"]
+name = "python"
+[language-server.pylsp]
+command = "pylsp"
+timeout = 60
+[language-server.pylsp.config.pylsp]
+skip_token_initialization = true
+[language-server.pylsp.config.pylsp.plugins]
+preload = { enabled = false }
+rope_autoimport = { enabled = false }
+[[language]]
+formatter = { command = "prettier", args = ["--parser=latex-parser"] }
+language-servers = ["texlab"]
+name = "latex"
+[language-server.texlab.config]
+build = { executable = "latexmk", args = [
+  "-pdf",
+  "-interaction=nonstopmode",
+  "-synctex=1",
+  "%f",
+], onSave = true }
+chktex.onEdit = true
+forwardSearch = { executable = "zathura", args = [
+  "--synctex-forward",
+  "%l:1:%f",
+  "%p",
+] }
+[[language]]
+formatter = { command = 'prettier', args = ["--parser", "json"] }
+name = "json"
+[[language]]
+formatter = { command = "npx", args = ["prettier", "--parser", "typescript"] }
+language-servers = ["typescript-language-server"]
+name = "typescript"
+[[language]]
+formatter = { command = "prettier", args = ["--parser", "typescript"] }
+name = "javascript"
+[language-server.taplo]
+args = ["lsp", "stdio"]
+command = "taplo"
+[language-server.taplo.config.formatting]
+reorder_keys = true
+[[language]]
+auto-format = true
+language-servers = ["taplo"]
+name = "toml"

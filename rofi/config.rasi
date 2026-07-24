@@ -1,0 +1,7 @@
+configuration {
+    combi-modi: "calc:~/.config/rofi/show_calc.sh,drun";
+    modi: "combi";
+}
+//	@theme "dmenu"
+
+@theme "/usr/share/rofi/themes/docu.rasi"
