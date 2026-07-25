@@ -186,13 +186,13 @@ label:focus {
 }
 
 #custom-gpuinfo {
-    background-color: #c0392b;
-    color: #000000;
+    background-color: #121212;
+    color: #ffffff;
     padding: 0 11px;
 }
 
 #memory {
-    background-color: #9b59b6;
+    background-color: #8e44ad;
     min-width: 50px;
 }
 
