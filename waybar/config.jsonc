@@ -221,6 +221,8 @@
         "interval": 1,
         "tooltip": true,
         "on-click": "foot nvtop",
+        "min-length": 6,
+        "justify": "center",
     }
 
 }
