@@ -10,9 +10,6 @@
 # picks the default output file (~/Pictures/screenshot-<name>.png) so
 # concurrent callers never share a path — no defaulting to the same
 # screenshot.png the user's own $mod+F7 capture and other callers use.
-# Capture is also serialized with flock, since the workspace-switch step
-# below is a global side effect: two callers switching workspaces at once
-# would race visually even with distinct output files.
 #
 # Unlike a plain `grim` full-screen/output capture, this looks up the
 # window or workspace's rect via `swaymsg -t get_tree` and crops to just
@@ -20,13 +17,12 @@
 # window overlaps that rect, the overlap is captured too.
 #
 # Sway only renders the workspace currently visible on each output, so a
-# window on a hidden workspace can't be captured without switching to it
-# first. When that's needed, this briefly switches to the target
-# workspace, screenshots, then switches back to whatever workspace was
-# focused before — so the net effect is that focus doesn't move.
+# window/workspace that isn't currently visible can't be captured without
+# switching to it — and switching briefly steals the user's screen, which
+# is disruptive. This script never does that: it only captures targets
+# that are already visible, and errors out otherwise so you (or the user)
+# can switch to it manually first.
 set -euo pipefail
-
-lockfile="/tmp/screenshot-app.lock"
 
 usage() {
 	cat >&2 <<EOF
@@ -59,11 +55,6 @@ fi
 name="$1"
 query="$2"
 out="${3:-$HOME/Pictures/screenshot-$name.png}"
-
-# Everything past this point touches shared compositor state (focused
-# workspace), so only one invocation runs it at a time.
-exec 9>"$lockfile"
-flock 9
 
 tree="$(swaymsg -t get_tree)"
 
@@ -104,37 +95,13 @@ else
 	target_ws="$(echo "$match" | jq -r '.name')"
 fi
 
-workspaces="$(swaymsg -t get_workspaces)"
-orig_ws="$(echo "$workspaces" | jq -r '.[] | select(.focused) | .name')"
-target_visible="$(echo "$workspaces" | jq -r --arg w "$target_ws" '.[] | select(.name == $w) | .visible')"
-
-switched=false
+target_visible="$(swaymsg -t get_workspaces | jq -r --arg w "$target_ws" '.[] | select(.name == $w) | .visible')"
 if [ "$target_visible" != "true" ]; then
-	swaymsg -q workspace "$target_ws"
-	switched=true
+	echo "'$target_ws' isn't currently visible — switch to it first (this tool never changes your active workspace)." >&2
+	exit 1
 fi
 
-restore() {
-	if [ "$switched" = true ]; then
-		swaymsg -q workspace "$orig_ws"
-	fi
-}
-trap restore EXIT
-
-# Re-fetch the tree: a workspace switch can change rects (e.g. layout
-# reflow), and for "app" mode we need the window's rect specifically.
-tree="$(swaymsg -t get_tree)"
-if [ "$mode" = app ]; then
-	rect="$(echo "$tree" | jq -r --argjson id "$con_id" '
-        [.. | objects | select(.id? == $id)] | first
-        | "\(.rect.x),\(.rect.y) \(.rect.width)x\(.rect.height)"
-    ')"
-else
-	rect="$(echo "$tree" | jq -r --arg w "$target_ws" '
-        [.. | objects | select(.type == "workspace" and .name == $w)] | first
-        | "\(.rect.x),\(.rect.y) \(.rect.width)x\(.rect.height)"
-    ')"
-fi
+rect="$(echo "$match" | jq -r '"\(.rect.x),\(.rect.y) \(.rect.width)x\(.rect.height)"')"
 
 grim -g "$rect" "$out"
 echo "Saved to $out"
