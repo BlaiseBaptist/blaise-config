@@ -2,9 +2,17 @@
 # Screenshot a single app window or a whole workspace on Sway, by name.
 #
 # Usage:
-#   screenshot-app.sh app <app_id-or-title substring> [output-path]
-#   screenshot-app.sh workspace <workspace name/number substring> [output-path]
+#   screenshot-app.sh app <name> <app_id-or-title substring> [output-path]
+#   screenshot-app.sh workspace <name> <workspace name/number substring> [output-path]
 #   screenshot-app.sh list
+#
+# <name> is a required tag for this capture (e.g. an agent/task id). It
+# picks the default output file (~/Pictures/screenshot-<name>.png) so
+# concurrent callers never share a path — no defaulting to the same
+# screenshot.png the user's own $mod+F7 capture and other callers use.
+# Capture is also serialized with flock, since the workspace-switch step
+# below is a global side effect: two callers switching workspaces at once
+# would race visually even with distinct output files.
 #
 # Unlike a plain `grim` full-screen/output capture, this looks up the
 # window or workspace's rect via `swaymsg -t get_tree` and crops to just
@@ -18,13 +26,13 @@
 # focused before — so the net effect is that focus doesn't move.
 set -euo pipefail
 
-default_out="$HOME/Pictures/screenshot.png"
+lockfile="/tmp/screenshot-app.lock"
 
 usage() {
 	cat >&2 <<EOF
 Usage:
-  $(basename "$0") app <app_id-or-title substring> [output-path]
-  $(basename "$0") workspace <name/number substring> [output-path]
+  $(basename "$0") app <name> <app_id-or-title substring> [output-path]
+  $(basename "$0") workspace <name> <name/number substring> [output-path]
   $(basename "$0") list
 EOF
 	exit 1
@@ -34,10 +42,8 @@ EOF
 mode="$1"
 shift
 
-tree="$(swaymsg -t get_tree)"
-
-case "$mode" in
-list)
+if [ "$mode" = list ]; then
+	tree="$(swaymsg -t get_tree)"
 	echo "Windows (app_id / title):"
 	echo "$tree" | jq -r '
         [.. | objects | select(.pid? != null)]
@@ -46,12 +52,22 @@ list)
 	echo "Workspaces:"
 	echo "$tree" | jq -r '[.. | objects | select(.type? == "workspace")] | .[] | "  " + .name'
 	exit 0
-	;;
-app)
-	[ $# -ge 1 ] || usage
-	query="$1"
-	out="${2:-$default_out}"
+fi
 
+[ "$mode" = app ] || [ "$mode" = workspace ] || usage
+[ $# -ge 2 ] || usage
+name="$1"
+query="$2"
+out="${3:-$HOME/Pictures/screenshot-$name.png}"
+
+# Everything past this point touches shared compositor state (focused
+# workspace), so only one invocation runs it at a time.
+exec 9>"$lockfile"
+flock 9
+
+tree="$(swaymsg -t get_tree)"
+
+if [ "$mode" = app ]; then
 	match="$(echo "$tree" | jq -r --arg q "$query" '
         [.. | objects | select(.pid? != null) |
             select(
@@ -73,12 +89,7 @@ app)
             select([.. | objects | .id?] | any(. == $id))
         ] | first | .name
     ')"
-	;;
-workspace)
-	[ $# -ge 1 ] || usage
-	query="$1"
-	out="${2:-$default_out}"
-
+else
 	match="$(echo "$tree" | jq -r --arg q "$query" '
         [.. | objects | select(.type? == "workspace") |
             select((.name // "") | ascii_downcase | contains($q | ascii_downcase))
@@ -91,11 +102,7 @@ workspace)
 	fi
 
 	target_ws="$(echo "$match" | jq -r '.name')"
-	;;
-*)
-	usage
-	;;
-esac
+fi
 
 workspaces="$(swaymsg -t get_workspaces)"
 orig_ws="$(echo "$workspaces" | jq -r '.[] | select(.focused) | .name')"
