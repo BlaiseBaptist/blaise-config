@@ -10,6 +10,12 @@
 # window or workspace's rect via `swaymsg -t get_tree` and crops to just
 # that rect. It's a geometric crop, not real window isolation: if another
 # window overlaps that rect, the overlap is captured too.
+#
+# Sway only renders the workspace currently visible on each output, so a
+# window on a hidden workspace can't be captured without switching to it
+# first. When that's needed, this briefly switches to the target
+# workspace, screenshots, then switches back to whatever workspace was
+# focused before — so the net effect is that focus doesn't move.
 set -euo pipefail
 
 default_out="$HOME/Pictures/screenshot.png"
@@ -61,7 +67,12 @@ app)
 		exit 1
 	fi
 
-	rect="$(echo "$match" | jq -r '"\(.rect.x),\(.rect.y) \(.rect.width)x\(.rect.height)"')"
+	con_id="$(echo "$match" | jq -r '.id')"
+	target_ws="$(echo "$tree" | jq -r --argjson id "$con_id" '
+        [.. | objects | select(.type == "workspace") |
+            select([.. | objects | .id?] | any(. == $id))
+        ] | first | .name
+    ')"
 	;;
 workspace)
 	[ $# -ge 1 ] || usage
@@ -79,12 +90,44 @@ workspace)
 		exit 1
 	fi
 
-	rect="$(echo "$match" | jq -r '"\(.rect.x),\(.rect.y) \(.rect.width)x\(.rect.height)"')"
+	target_ws="$(echo "$match" | jq -r '.name')"
 	;;
 *)
 	usage
 	;;
 esac
+
+workspaces="$(swaymsg -t get_workspaces)"
+orig_ws="$(echo "$workspaces" | jq -r '.[] | select(.focused) | .name')"
+target_visible="$(echo "$workspaces" | jq -r --arg w "$target_ws" '.[] | select(.name == $w) | .visible')"
+
+switched=false
+if [ "$target_visible" != "true" ]; then
+	swaymsg -q workspace "$target_ws"
+	switched=true
+fi
+
+restore() {
+	if [ "$switched" = true ]; then
+		swaymsg -q workspace "$orig_ws"
+	fi
+}
+trap restore EXIT
+
+# Re-fetch the tree: a workspace switch can change rects (e.g. layout
+# reflow), and for "app" mode we need the window's rect specifically.
+tree="$(swaymsg -t get_tree)"
+if [ "$mode" = app ]; then
+	rect="$(echo "$tree" | jq -r --argjson id "$con_id" '
+        [.. | objects | select(.id? == $id)] | first
+        | "\(.rect.x),\(.rect.y) \(.rect.width)x\(.rect.height)"
+    ')"
+else
+	rect="$(echo "$tree" | jq -r --arg w "$target_ws" '
+        [.. | objects | select(.type == "workspace" and .name == $w)] | first
+        | "\(.rect.x),\(.rect.y) \(.rect.width)x\(.rect.height)"
+    ')"
+fi
 
 grim -g "$rect" "$out"
 echo "Saved to $out"
