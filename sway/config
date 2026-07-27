@@ -41,6 +41,7 @@ exec swayidle  \
 	timeout 310 'swaymsg "output * dpms off"' \
 	resume 'swaymsg "output * dpms off" && swaymsg "output * dpms on"' \
 	before-sleep 'waylock'
+exec ~/.config/sway/idle-inhibit-suspend-guard.sh
 bindsym $mod+f9 exec waylock
 # bindswitch --locked lid:on exec waylock; swaymsg "output eDP-1 dpms off"
 bindswitch --locked lid:on swaymsg "output eDP-1 dpms off"
