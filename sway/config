@@ -37,6 +37,7 @@ assign [class="rviz2" ] workspace 5
 assign [class="Gazebo GUI" ] workspace 6
 
 exec swayidle  \
+	timeout 300 'waylock' \
 	timeout 310 'swaymsg "output * dpms off"' \
 	resume 'swaymsg "output * dpms off" && swaymsg "output * dpms on"' \
 	before-sleep 'waylock'
