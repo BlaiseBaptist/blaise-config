@@ -44,6 +44,9 @@ assign [class="Gazebo GUI" ] workspace 6
 assign [class="robomasterclient.exe" ] workspace 5
 assign [class="robomasterengine.exe" ] workspace 6
 assign [class="rmserverlogclient.exe" ] workspace 7
+# The client spawns a conhost window per RMClientAssist_* helper. Match on
+# title too — bare class="conhost.exe" would catch every Wine console.
+assign [class="conhost.exe" title="RMClientDaemon"] workspace 7
 
 exec swayidle  \
 	timeout 310 'swaymsg "output * dpms off"' \
