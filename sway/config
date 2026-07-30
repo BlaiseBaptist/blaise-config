@@ -40,6 +40,11 @@ assign [class="discord" ] workspace 4
 assign [class="rviz2" ] workspace 5
 assign [class="Gazebo GUI" ] workspace 6
 
+# RoboMaster referee software (see ~/RoboMaster/rm-launch.sh)
+assign [class="robomasterclient.exe" ] workspace 5
+assign [class="robomasterengine.exe" ] workspace 6
+assign [class="rmserverlogclient.exe" ] workspace 7
+
 exec swayidle  \
 	timeout 310 'swaymsg "output * dpms off"' \
 	resume 'swaymsg "output * dpms off" && swaymsg "output * dpms on"' \
