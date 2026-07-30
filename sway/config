@@ -47,6 +47,8 @@ assign [class="rmserverlogclient.exe" ] workspace 7
 # The client spawns a conhost window per RMClientAssist_* helper. Match on
 # title too — bare class="conhost.exe" would catch every Wine console.
 assign [class="conhost.exe" title="RMClientDaemon"] workspace 7
+# Wine's crash dialog ("Program Error") — otherwise it pops up over the client.
+assign [class="winedbg.exe" ] workspace 7
 
 exec swayidle  \
 	timeout 310 'swaymsg "output * dpms off"' \
