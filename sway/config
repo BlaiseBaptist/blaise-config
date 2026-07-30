@@ -42,6 +42,9 @@ assign [class="Gazebo GUI" ] workspace 6
 
 # RoboMaster referee software (see ~/RoboMaster/rm-launch.sh)
 assign [class="robomasterclient.exe" ] workspace 5
+# The client normally runs inside a Wine virtual desktop (rm-launch.sh), which
+# is what stops it hijacking the compositor with a real fullscreen window.
+assign [class="explorer.exe" title="RMClient"] workspace 5
 assign [class="robomasterengine.exe" ] workspace 6
 assign [class="rmserverlogclient.exe" ] workspace 7
 # The client spawns a conhost window per RMClientAssist_* helper. Match on
@@ -190,6 +193,11 @@ bindsym $mod+F2 exec playerctl position 1-
 bindsym $mod+F3 exec playerctl play-pause
 bindsym $mod+F4 exec playerctl position 1+
 bindsym $mod+F5 exec playerctl next
+
+# Toggle the RoboMaster FPV camera overlay (~/RoboMaster/fpv-overlay.sh).
+# It is a layer-shell surface that takes no keyboard input of its own, so the
+# toggle is signalled rather than bound inside the app.
+bindsym $mod+F8 exec pkill -USR1 -f fpv-layer.py
 
 bar {
 	mode invisible
