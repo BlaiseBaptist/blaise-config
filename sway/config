@@ -197,7 +197,9 @@ bindsym $mod+F5 exec playerctl next
 # Toggle the RoboMaster FPV camera overlay (~/RoboMaster/fpv-overlay.sh).
 # It is a layer-shell surface that takes no keyboard input of its own, so the
 # toggle is signalled rather than bound inside the app.
-bindsym $mod+F8 exec pkill -USR1 -f fpv-layer.py
+# grave and asciitilde are the same physical key, shifted or not — bind both.
+bindsym $mod+grave exec pkill -USR1 -f fpv-layer.py
+bindsym $mod+asciitilde exec pkill -USR1 -f fpv-layer.py
 
 bar {
 	mode invisible
