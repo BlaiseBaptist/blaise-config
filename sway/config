@@ -10,6 +10,7 @@ set $term foot
 exec_always export TERMINAL=/usr/bin/foot
 set $menu rofi -show combi
 bindsym $mod+Shift+v exec cliphist list | rofi -dmenu | cliphist decode | wl-copy
+bindsym $mod+F8 exec ~/.config/sway/shift-spam.sh
 exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec keyd-application-mapper
 exec wl-paste --type text --watch cliphist store
