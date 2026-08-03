@@ -53,15 +53,22 @@ assign [class="conhost.exe" title="RMClientDaemon"] workspace 7
 # Wine's crash dialog ("Program Error") — otherwise it pops up over the client.
 assign [class="winedbg.exe" ] workspace 7
 
+# after-resume is driven by logind's PrepareForSleep, not by the lid switch, so
+# it unblanks on every wake even if the lid-open event never reaches sway. This
+# is the belt to the bindswitch braces below — on 2026-08-03 the panel was left
+# DPMS-off across a suspend and nothing turned it back on.
 exec swayidle  \
 	timeout 310 'swaymsg "output * dpms off"' \
 	resume 'swaymsg "output * dpms off" && swaymsg "output * dpms on"' \
-	before-sleep 'waylock'
+	before-sleep 'waylock' \
+	after-resume 'swaymsg "output * dpms on"'
 exec ~/.config/sway/idle-inhibit-suspend-guard.sh
 bindsym $mod+f9 exec waylock
-# bindswitch --locked lid:on exec waylock; swaymsg "output eDP-1 dpms off"
-bindswitch --locked lid:on swaymsg "output eDP-1 dpms off"
-bindswitch --locked lid:off swaymsg "output eDP-1 dpms on"
+# bindswitch runs a sway command, not a shell command — `swaymsg "..."` here
+# parses as the unknown command `swaymsg` and silently does nothing, which is
+# how the lid could turn the panel off (via swayidle) but never turn it back on.
+bindswitch --locked lid:on output eDP-1 dpms off
+bindswitch --locked lid:off output eDP-1 dpms on
 
 input type:touchpad {
 	dwt enabled
