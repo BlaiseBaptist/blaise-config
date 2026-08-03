@@ -6,14 +6,33 @@
 # __NV_PRIME_RENDER_OFFLOAD) uses the nvidia render node directly and is
 # unaffected.
 #
-# by-path avoids cardN renumbering across boots: if i915 ever came up as card0,
-# the old hardcoded "card1:card0" made the connector-less nvidia card sway's
-# primary device, which yields zero outputs.
-igpu=/dev/dri/by-path/pci-0000:00:02.0-card
-if [ -e "$igpu" ]; then
+# WLR_DRM_DEVICES is a COLON-separated list, so a /dev/dri/by-path/... name
+# cannot be used literally — it contains colons and gets split into garbage
+# ("Could not canonicalize path /dev/dri/by-path/pci-0000"). Resolve the by-path
+# symlink to its /dev/dri/cardN target instead: selection stays keyed to the PCI
+# address (so cardN renumbering across boots can't pick the wrong GPU) while the
+# exported value stays colon-free.
+igpu=$(readlink -f /dev/dri/by-path/pci-0000:00:02.0-card 2>/dev/null)
+if [ -n "$igpu" ] && [ -e "$igpu" ]; then
 	export WLR_DRM_DEVICES="$igpu"
 fi
-# If it's missing, leave WLR_DRM_DEVICES unset and let wlroots autodetect
-# rather than starting with a device list that can't work.
+# If it can't be resolved, leave WLR_DRM_DEVICES unset and let wlroots
+# autodetect rather than starting with a device list that cannot work.
+
+# Never let a bad WLR_DRM_DEVICES cost a login: if sway dies within 10s of
+# starting, that is a startup failure rather than a real session, so retry once
+# with autodetect. A normal session always outlives this window.
+if [ -n "$WLR_DRM_DEVICES" ]; then
+	start=$(date +%s)
+	sway "$@"
+	status=$?
+	if [ $status -ne 0 ] && [ $(($(date +%s) - start)) -lt 10 ]; then
+		echo "sway failed in ${status} with WLR_DRM_DEVICES=$WLR_DRM_DEVICES;" \
+			"retrying with autodetect" >&2
+		unset WLR_DRM_DEVICES
+		exec sway "$@"
+	fi
+	exit $status
+fi
 
 exec sway "$@"
