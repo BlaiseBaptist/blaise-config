@@ -1,0 +1,19 @@
+#!/bin/sh
+# Pin the compositor to the Intel iGPU (PCI 00:02.0) — it owns every connector
+# on this machine (eDP-1, DP-1..5, HDMI-A-1). The nvidia dGPU (01:00.0) has no
+# connectors, so sway has no reason to open it; leaving it out keeps a failed
+# dGPU resume from taking down the session. Render offload (prime-run,
+# __NV_PRIME_RENDER_OFFLOAD) uses the nvidia render node directly and is
+# unaffected.
+#
+# by-path avoids cardN renumbering across boots: if i915 ever came up as card0,
+# the old hardcoded "card1:card0" made the connector-less nvidia card sway's
+# primary device, which yields zero outputs.
+igpu=/dev/dri/by-path/pci-0000:00:02.0-card
+if [ -e "$igpu" ]; then
+	export WLR_DRM_DEVICES="$igpu"
+fi
+# If it's missing, leave WLR_DRM_DEVICES unset and let wlroots autodetect
+# rather than starting with a device list that can't work.
+
+exec sway "$@"
