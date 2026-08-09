@@ -35,6 +35,7 @@ workspace 6 output $monitor
 assign [app_id="zen" ] workspace 2
 assign [app_id="google-chrome" ] workspace 2
 assign [class="steam" ] workspace 3
+assign [app_id="t3code" ] workspace 3
 assign [app_id="discord" ] workspace 4
 assign [class="rviz2" ] workspace 5
 assign [class="Gazebo GUI" ] workspace 6
