@@ -22,8 +22,6 @@ set $monitor "HP Inc. HP U28 4K HDR 1CR20606PP"
 set $second_monitor "AOC 27G2WG3- 1TMP6HA010233"
 output eDP-1 resolution 1920x1080 position 3840,0
 output $monitor mode  3840x2160@59.997Hz position 0,0
-output $second_monitor position 0,0
-output HDMI-A-1 position 1920,0
 exec waylock
 
 workspace 1 output eDP-1
@@ -83,7 +81,7 @@ input type:touchpad {
 input type:pointer {
 	dwt enabled
 	tap disabled
-	pointer_accel -0.5
+	pointer_accel -0.2
 	accel_profile "flat"
 }
 input "2:10:TPPS/2_Elan_TrackPoint" {
