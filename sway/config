@@ -18,19 +18,18 @@ exec wl-paste --type image --watch cliphist store
 set $background "/home/blaise/Pictures/RustFerrisBg.jpg"
 output * bg $background fill
 
-set $monitor "HP Inc. HP U28 4K HDR 1CR20606PP"
-set $second_monitor "AOC 27G2WG3- 1TMP6HA010233"
-output eDP-1 resolution 1920x1080 position 3840,0
-output $monitor mode  3840x2160@59.997Hz position 0,0
-exec waylock
+set $primary "AOC 27G2WG3- 1TMP6HA010233"
+set $secondary "Dell Inc. DELL E198WFP G424H8611EKS"
+output $primary mode 1920x1080@165.003Hz position 0,0
+output $secondary mode 1440x900@74.984Hz position 1920,0
 
-workspace 1 output eDP-1
-workspace 3 output eDP-1
-workspace 5 output eDP-1
+workspace 1 output $primary
+workspace 3 output $primary
+workspace 5 output $primary
 
-workspace 2 output $monitor
-workspace 4 output $monitor
-workspace 6 output $monitor
+workspace 2 output $secondary
+workspace 4 output $secondary
+workspace 6 output $secondary
 
 assign [app_id="zen" ] workspace 2
 assign [app_id="google-chrome" ] workspace 2
@@ -52,10 +51,6 @@ assign [class="conhost.exe" title="RMClientDaemon"] workspace 7
 # Wine's crash dialog ("Program Error") — otherwise it pops up over the client.
 assign [class="winedbg.exe" ] workspace 7
 
-# after-resume is driven by logind's PrepareForSleep, not by the lid switch, so
-# it unblanks on every wake even if the lid-open event never reaches sway. This
-# is the belt to the bindswitch braces below — on 2026-08-03 the panel was left
-# DPMS-off across a suspend and nothing turned it back on.
 exec swayidle  \
 	timeout 310 'swaymsg "output * dpms off"' \
 	resume 'swaymsg "output * dpms off" && swaymsg "output * dpms on"' \
@@ -63,11 +58,6 @@ exec swayidle  \
 	after-resume 'swaymsg "output * dpms on"'
 exec ~/.config/sway/idle-inhibit-suspend-guard.sh
 bindsym $mod+f9 exec waylock
-# bindswitch runs a sway command, not a shell command — `swaymsg "..."` here
-# parses as the unknown command `swaymsg` and silently does nothing, which is
-# how the lid could turn the panel off (via swayidle) but never turn it back on.
-bindswitch --locked lid:on output eDP-1 dpms off
-bindswitch --locked lid:off output eDP-1 dpms on
 
 input type:touchpad {
 	dwt enabled
