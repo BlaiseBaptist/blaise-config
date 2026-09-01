@@ -20,8 +20,8 @@ output * bg $background fill
 
 set $monitor "HP Inc. HP U28 4K HDR 1CR20606PP"
 set $second_monitor "AOC 27G2WG3- 1TMP6HA010233"
-output eDP-1 resolution 1920x1080 position 3840,0
-output $monitor mode  3840x2160@59.997Hz position 0,0
+output eDP-1 resolution 1920x1200 position 0,0 scale 1
+output $monitor mode 3840x2160@59.997Hz scale 1.125
 exec waylock
 
 workspace 1 output eDP-1
@@ -194,7 +194,7 @@ bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
 bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
 # bindsym Print exec grim
 bindsym Print exec grim -g "$(slurp)"
-bindsym $mod+F7 exec grim -g "$(slurp -d)" ~/Pictures/screenshot.png
+bindsym $mod+F7 exec grim -g "$(slurp -d)" - | tee ~/Pictures/screenshot.png | wl-copy --type image/png
 bindsym $mod+F1 exec playerctl previous
 bindsym $mod+F2 exec playerctl position 1-
 bindsym $mod+F3 exec playerctl play-pause
