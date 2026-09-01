@@ -1,6 +1,6 @@
 * {
     /* `otf-font-awesome` is required to be installed for icons */
-      font-family: "JetBrainsMono Nerd Font", monospace;
+      font-family: "MesloLGS Nerd Font", monospace;
     /* font-family: FontAwesome, Roboto, Helvetica, Arial, sans-serif; */
     font-size: 13px;
 }
@@ -191,6 +191,7 @@ label:focus {
     padding: 0 11px;
 }
 
+
 #memory {
     background-color: #8e44ad;
     min-width: 50px;
@@ -346,4 +347,13 @@ label:focus {
 
 #privacy-item.audio-out {
     background-color: #0069d4;
+}
+#custom-bluetooth-devices {
+    color: #ffffff;
+    background-color: #1c71d8;
+    padding-left: 6px;
+    padding-right: 6px;
+    margin-left: 4px;
+    margin-right: 4px;
+    border-radius: 6px;
 }
