@@ -23,10 +23,17 @@
     "temperature",
     "backlight",
     "battery",
+    "custom/bluetooth-devices",
     "clock",
     "tray",
     "custom/power"
   ],
+  "custom/bluetooth-devices": {
+    "format": "{}",
+    "exec": "$HOME/.config/waybar/scripts/bluetooth-devices.sh",
+    "interval": 10,
+    "on-click": "foot bluetoothctl"
+  },
   "sway/mode": {
     "format": "<span style=\"italic\">{}</span>"
   },
