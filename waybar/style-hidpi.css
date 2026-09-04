@@ -1,0 +1,114 @@
+/* Generated overrides for the 4K output, which runs at sway scale 1.5 while the
+ * laptop panel runs at scale 1 (see ~/.config/sway/config). That 1.5 is a
+ * personal preference -- it has been 1.125 and 2 before -- so treat it as a
+ * value that moves, not a fixed property of the panel.
+ *
+ * Every px in style.css is a logical px, so on the 4K bar it lands on 1.5
+ * physical px. The two panels also differ in density -- the HP U28 is
+ * 3840px/620mm = 157ppi, the laptop 1920px/340mm = 143ppi -- so matching
+ * apparent size means matching physical px per inch, not logical px:
+ *
+ *     13px * (157/143) / 1.5 = 9.5px
+ *
+ * These rules therefore scale the size-bearing values by 0.73 (9.5 / 13), which
+ * makes text on the 4K bar look the same size as on the laptop bar and keeps
+ * the rest of the bar in proportion with it.
+ *
+ * Scoped to the .hidpi class, set via "name" in config.jsonc, so the laptop
+ * bar is untouched. Regenerate rather than hand-edit if style.css changes -- and
+ * regenerate whenever the 4K scale changes, since every number below is derived
+ * from it and will silently be wrong otherwise.
+ */
+
+window#waybar.hidpi * {
+    font-size: 9.5px;
+}
+
+window#waybar.hidpi {
+    border-bottom: 2px solid rgba(100, 114, 125, 0.5);
+}
+
+window#waybar.hidpi button {
+    box-shadow: inset 0 -2px transparent;
+}
+
+window#waybar.hidpi button:hover {
+    box-shadow: inset 0 -2px #ffffff;
+}
+
+window#waybar.hidpi #workspaces button {
+    padding: 0 4px;
+    border-radius: 4px;
+}
+
+window#waybar.hidpi #workspaces button.focused {
+    box-shadow: inset 0 -2px #ffffff;
+}
+
+window#waybar.hidpi #mode {
+    box-shadow: inset 0 -2px #ffffff;
+}
+
+window#waybar.hidpi #clock, window#waybar.hidpi #battery, window#waybar.hidpi #cpu, window#waybar.hidpi #memory, window#waybar.hidpi #disk, window#waybar.hidpi #temperature, window#waybar.hidpi #backlight, window#waybar.hidpi #network, window#waybar.hidpi #pulseaudio, window#waybar.hidpi #wireplumber, window#waybar.hidpi #custom-media, window#waybar.hidpi #tray, window#waybar.hidpi #mode, window#waybar.hidpi #idle_inhibitor, window#waybar.hidpi #scratchpad, window#waybar.hidpi #power-profiles-daemon, window#waybar.hidpi #custom-gpuinfo, window#waybar.hidpi #mpd, window#waybar.hidpi #language, window#waybar.hidpi #keyboard-state {
+    padding: 0 7px;
+    margin: 0 1px;
+    border-radius: 4px;
+}
+
+window#waybar.hidpi #workspaces {
+    border-radius: 4px;
+}
+
+window#waybar.hidpi #window, window#waybar.hidpi #workspaces {
+    margin: 0 3px;
+}
+
+window#waybar.hidpi #power-profiles-daemon {
+    padding-right: 11px;
+}
+
+window#waybar.hidpi #cpu {
+    min-width: 37px;
+}
+
+window#waybar.hidpi #custom-gpuinfo {
+    padding: 0 8px;
+}
+
+window#waybar.hidpi #memory {
+    min-width: 37px;
+}
+
+window#waybar.hidpi #custom-media {
+    min-width: 73px;
+}
+
+window#waybar.hidpi #language {
+    padding: 0 4px;
+    margin: 0 1px;
+    min-width: 12px;
+}
+
+window#waybar.hidpi #keyboard-state {
+    padding: 0 0px;
+    margin: 0 1px;
+    min-width: 12px;
+}
+
+window#waybar.hidpi #keyboard-state > label {
+    padding: 0 4px;
+}
+
+window#waybar.hidpi #privacy-item {
+    padding: 0 4px;
+    margin: 0 1px;
+    border-radius: 4px;
+}
+
+window#waybar.hidpi #custom-bluetooth-devices {
+    padding-left: 4px;
+    padding-right: 4px;
+    margin-left: 3px;
+    margin-right: 3px;
+    border-radius: 4px;
+}

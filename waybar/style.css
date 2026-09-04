@@ -1,3 +1,5 @@
+@import url("file:///home/blaise/.config/waybar/style-hidpi.css");
+
 * {
     /* `otf-font-awesome` is required to be installed for icons */
       font-family: "MesloLGS Nerd Font", monospace;
