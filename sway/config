@@ -10,7 +10,6 @@ set $term foot
 exec_always export TERMINAL=/usr/bin/foot
 set $menu rofi -show combi
 bindsym $mod+Shift+v exec cliphist list | rofi -dmenu | cliphist decode | wl-copy
-bindsym $mod+F8 exec ~/.config/sway/shift-spam.sh
 exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec keyd-application-mapper
 exec wl-paste --type text --watch cliphist store
@@ -21,7 +20,7 @@ output * bg $background fill
 set $monitor "HP Inc. HP U28 4K HDR 1CR20606PP"
 set $second_monitor "AOC 27G2WG3- 1TMP6HA010233"
 output eDP-1 resolution 1920x1200 position 0,0 scale 1
-output $monitor mode 3840x2160@59.997Hz scale 1.125
+output $monitor mode 3840x2160@59.997Hz scale 1.5
 exec waylock
 
 workspace 1 output eDP-1
@@ -63,7 +62,11 @@ exec swayidle  \
 	before-sleep 'waylock' \
 	after-resume 'swaymsg "output * dpms on"'
 exec ~/.config/sway/idle-inhibit-suspend-guard.sh
-bindsym $mod+f9 exec waylock
+# Lock, then blank the screens. -fork-on-lock returns only once the session is
+# actually locked, so the blank can never race ahead of the lock surface and
+# leave the desktop visible on the next keypress. blank-screens.sh is what
+# brings the outputs back — a bare `dpms off` stays off through input.
+bindsym $mod+f9 exec waylock -fork-on-lock && ~/.config/sway/blank-screens.sh
 # bindswitch runs a sway command, not a shell command — `swaymsg "..."` here
 # parses as the unknown command `swaymsg` and silently does nothing, which is
 # how the lid could turn the panel off (via swayidle) but never turn it back on.
@@ -98,6 +101,7 @@ input type:keyboard {
 bindsym $mod+Return exec $term
 
 bindsym $mod+q kill
+bindsym $mod+Shift+q exec kill -9 $(swaymsg -t get_tree | jq 'recurse(.nodes[]?,.floating_nodes[]?) | select(.focused).pid')
 
 bindsym $mod+Space exec $menu
 
