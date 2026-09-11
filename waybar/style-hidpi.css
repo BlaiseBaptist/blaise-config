@@ -63,26 +63,6 @@ window#waybar.hidpi #window, window#waybar.hidpi #workspaces {
     margin: 0 3px;
 }
 
-window#waybar.hidpi #power-profiles-daemon {
-    padding-right: 11px;
-}
-
-window#waybar.hidpi #cpu {
-    min-width: 37px;
-}
-
-window#waybar.hidpi #custom-gpuinfo {
-    padding: 0 8px;
-}
-
-window#waybar.hidpi #memory {
-    min-width: 37px;
-}
-
-window#waybar.hidpi #custom-media {
-    min-width: 73px;
-}
-
 window#waybar.hidpi #language {
     padding: 0 4px;
     margin: 0 1px;
@@ -106,8 +86,8 @@ window#waybar.hidpi #privacy-item {
 }
 
 window#waybar.hidpi #custom-bluetooth-devices {
-    padding-left: 4px;
-    padding-right: 4px;
+    padding-left: 7px;
+    padding-right: 7px;
     margin-left: 3px;
     margin-right: 3px;
     border-radius: 4px;

@@ -197,13 +197,11 @@
     }
   },
   "custom/gpuinfo": {
-    "format": "{text}",
+    "format": "{text} 󰢮",
     "exec": "$HOME/.config/waybar/scripts/gpuinfo.sh",
     "return-type": "json",
     "interval": 1,
     "tooltip": true,
-    "on-click": "foot nvtop",
-    "min-length": 6,
-    "justify": "center"
+    "on-click": "foot nvtop"
   }
 }

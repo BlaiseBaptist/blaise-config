@@ -2,7 +2,11 @@
 
 * {
     /* `otf-font-awesome` is required to be installed for icons */
-      font-family: "MesloLGS Nerd Font", monospace;
+    /* Propo, not plain: plain Nerd Font icons draw up to ~2 cells wide on a
+       1-cell advance, overhanging the right padding so modules ending in an
+       icon look off-centre. Propo gives icons their real advance; text glyphs
+       stay monospace, so {:>6} alignment is unaffected. */
+      font-family: "MesloLGS Nerd Font Propo", monospace;
     /* font-family: FontAwesome, Roboto, Helvetica, Arial, sans-serif; */
     font-size: 13px;
 }
@@ -158,10 +162,6 @@ button:hover {
     animation-direction: alternate;
 }
 
-#power-profiles-daemon {
-    padding-right: 15px;
-}
-
 #power-profiles-daemon.performance {
     background-color: #f53c3c;
     color: #ffffff;
@@ -184,19 +184,16 @@ label:focus {
 #cpu {
     background-color: #2ecc71;
     color: #000000;
-    min-width: 50px;
 }
 
 #custom-gpuinfo {
     background-color: #121212;
     color: #ffffff;
-    padding: 0 11px;
 }
 
 
 #memory {
     background-color: #8e44ad;
-    min-width: 50px;
 }
 
 #disk {
@@ -238,7 +235,6 @@ label:focus {
 #custom-media {
     background-color: #66cc99;
     color: #2a5c45;
-    min-width: 100px;
 }
 
 #custom-media.custom-spotify {
@@ -353,8 +349,8 @@ label:focus {
 #custom-bluetooth-devices {
     color: #ffffff;
     background-color: #1c71d8;
-    padding-left: 6px;
-    padding-right: 6px;
+    padding-left: 10px;
+    padding-right: 10px;
     margin-left: 4px;
     margin-right: 4px;
     border-radius: 6px;
