@@ -1,7 +1,7 @@
 configuration {
-    combi-modi: "calc:~/.config/rofi/show_calc.sh,drun";
-    modi: "combi";
+    modi: "drun,calc";
+    calc {
+        calc-command: "echo -n '{result}' | wl-copy";
+    }
 }
-//	@theme "dmenu"
-
 @theme "/usr/share/rofi/themes/docu.rasi"

@@ -8,7 +8,7 @@ set $up k
 set $right l
 set $term foot
 exec_always export TERMINAL=/usr/bin/foot
-set $menu rofi -show combi
+set $menu rofi -show drun
 bindsym $mod+Shift+v exec cliphist list | rofi -dmenu | cliphist decode | wl-copy
 exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec keyd-application-mapper
