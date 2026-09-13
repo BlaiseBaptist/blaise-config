@@ -14,3 +14,8 @@ helix/runtime/**
 !waybar/**
 !vulkan
 !vulkan/**
+!zsh
+!zsh/**
+zsh/.zcompdump*
+zsh/.zsh_history
+zsh/.zsh_sessions/
