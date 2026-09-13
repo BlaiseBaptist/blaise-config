@@ -19,6 +19,20 @@ fi
 # If it can't be resolved, leave WLR_DRM_DEVICES unset and let wlroots
 # autodetect rather than starting with a device list that cannot work.
 
+# WLR_DRM_DEVICES only limits KMS. wlroots still enumerates EGL devices, which
+# makes glvnd load libEGL_nvidia, and that holds /dev/nvidia0 open for the whole
+# session so the dGPU can never runtime-suspend (D3). Restrict EGL to Mesa for
+# sway and everything it launches. Vulkan is left alone so games still pick the
+# dGPU; ~/.local/bin/prime-run drops this variable for explicit offload.
+mesa_egl=/usr/share/glvnd/egl_vendor.d/50_mesa.json
+if [ -e "$mesa_egl" ]; then
+	export __EGL_VENDOR_LIBRARY_FILENAMES="$mesa_egl"
+fi
+
+# Put ~/.local/bin first for the whole session, not only zsh (.zshenv), so
+# launches from rofi, waybar and Steam get the prime-run and btop wrappers too.
+export PATH="$HOME/.local/bin:$PATH"
+
 # Never let a bad WLR_DRM_DEVICES cost a login: if sway dies within 10s of
 # starting, that is a startup failure rather than a real session, so retry once
 # with autodetect. A normal session always outlives this window.
@@ -29,7 +43,7 @@ if [ -n "$WLR_DRM_DEVICES" ]; then
 	if [ $status -ne 0 ] && [ $(($(date +%s) - start)) -lt 10 ]; then
 		echo "sway failed in ${status} with WLR_DRM_DEVICES=$WLR_DRM_DEVICES;" \
 			"retrying with autodetect" >&2
-		unset WLR_DRM_DEVICES
+		unset WLR_DRM_DEVICES __EGL_VENDOR_LIBRARY_FILENAMES
 		exec sway "$@"
 	fi
 	exit $status

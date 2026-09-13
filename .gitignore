@@ -12,3 +12,5 @@ helix/runtime/**
 !rofi/**
 !waybar
 !waybar/**
+!vulkan
+!vulkan/**

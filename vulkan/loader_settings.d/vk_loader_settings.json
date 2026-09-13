@@ -1,0 +1,15 @@
+{
+    "file_format_version": "1.0.0",
+    "settings_array": [
+        {
+            "app_keys": [
+                "/home/blaise/.local/share/Steam/ubuntu12_64/steamwebhelper"
+            ],
+            "additional_drivers_use_exclusively": true,
+            "additional_drivers": [
+                { "path": "/usr/lib/pressure-vessel/overrides/share/vulkan/icd.d/intel_icd.json" },
+                { "path": "/usr/share/vulkan/icd.d/intel_icd.json" }
+            ]
+        }
+    ]
+}
