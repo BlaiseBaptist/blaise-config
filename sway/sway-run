@@ -33,6 +33,11 @@ fi
 # launches from rofi, waybar and Steam get the prime-run and btop wrappers too.
 export PATH="$HOME/.local/bin:$PATH"
 
+# Default terminal for anything launched from the session (rofi-sensible-terminal,
+# i3-sensible-terminal and friends read $TERMINAL). An `exec_always export` in
+# the sway config can't do this: it only sets it in a throwaway shell.
+export TERMINAL=foot
+
 # Never let a bad WLR_DRM_DEVICES cost a login: if sway dies within 10s of
 # starting, that is a startup failure rather than a real session, so retry once
 # with autodetect. A normal session always outlives this window.

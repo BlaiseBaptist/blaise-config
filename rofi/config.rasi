@@ -1,5 +1,6 @@
 configuration {
     modi: "drun,calc";
+    terminal: "foot";
     calc {
         calc-command: "echo -n '{result}' | wl-copy";
     }
