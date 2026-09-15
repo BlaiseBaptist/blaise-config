@@ -13,6 +13,10 @@ exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec keyd-application-mapper
 exec wl-paste --type text --watch cliphist store
 exec wl-paste --type image --watch cliphist store
+# Notification daemon + center; $mod+n toggles the panel, $mod+Shift+n toggles do-not-disturb.
+exec swaync
+bindsym $mod+n exec swaync-client -t -sw
+bindsym $mod+Shift+n exec swaync-client -d -sw
 set $background "/home/blaise/Pictures/RustFerrisBg.jpg"
 output * bg $background fill
 
@@ -32,7 +36,7 @@ workspace 6 output $monitor
 
 assign [app_id="zen" ] workspace 2
 assign [app_id="google-chrome" ] workspace 2
-assign [class="steam" ] workspace 3
+assign [class="steam" ] workspace 5
 assign [app_id="t3code"] workspace 3
 assign [app_id="code-oss"] workspace 3
 assign [app_id="discord" ] workspace 4
@@ -213,10 +217,31 @@ bindsym $mod+F5 exec playerctl next
 bindsym $mod+grave exec pkill -USR1 -f fpv-layer.py
 bindsym $mod+asciitilde exec pkill -USR1 -f fpv-layer.py
 
-bar {
-	mode invisible
-	status_command waybar
-}
+# Window colours, taken from the waybar palette (~/.config/waybar/style.css):
+# focused = the blue focused-workspace button, inactive = the slate of the
+# other workspace buttons, urgent = the red used for alerts, background = the
+# navy bar. Indicator (split hint) is a lighter blue so it shows on the border.
+#                       border  bg      text    indicator child_border
+client.focused          #22577a #22577a #ffffff #5dade2   #22577a
+client.focused_inactive #3b4654 #3b4654 #c8d0d6 #3b4654   #3b4654
+client.unfocused        #3b4654 #3b4654 #9aa5ae #3b4654   #3b4654
+client.urgent           #eb4d4b #eb4d4b #ffffff #eb4d4b   #eb4d4b
+client.placeholder      #1b2636 #1b2636 #ffffff #1b2636   #1b2636
+client.background       #1b2636
+
+# No titlebars on normal tiled/floating windows: the focused window's title is
+# shown in waybar instead, so the top of the screen is one bar. Tabbed and
+# stacked containers still draw their tabs. The 2px border carries the
+# focused/unfocused colours above.
+default_border pixel 2
+default_floating_border pixel 2
+
+# Waybar runs on its own, not as a swaybar status_command. Under swaybar, every
+# `swaymsg reload` restarted swaybar, which owns the tray's
+# StatusNotifierWatcher; the watcher vanishing drops tray icons, and Electron
+# apps (Discord) never re-register theirs. Waybar now owns the watcher and
+# survives reloads. Reload its config with `pkill -SIGUSR2 waybar`.
+exec waybar
 exec_always nm-applet --indicator
 
 include /etc/sway/config.d/*

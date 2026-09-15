@@ -1,38 +1,83 @@
 // -*- mode: jsonc -*-
 {
+  // Waybar is launched with `exec` from the sway config rather than as
+  // swaybar's status_command, so `swaymsg reload` no longer restarts it (a
+  // restart drops Electron tray icons such as Discord's). CSS edits apply live;
+  // after editing this file run `pkill -SIGUSR2 waybar`.
+  "reload_style_on_change": true,
   "height": 30,
   "spacing": 4,
   "modules-left": [
     "sway/workspaces",
     "sway/mode",
     "sway/scratchpad",
+    // Sway draws no titlebars (default_border pixel), so the focused window's
+    // title lives here. Left rather than centre so a long title cannot run
+    // into the right-hand pills.
+    "sway/window",
     "custom/media"
   ],
-  "modules-center": [
-    "sway/window"
-  ],
+  "modules-center": [],
+  // Related modules are grouped so each group renders as one pill (see
+  // style.css). A group's CSS id is the part after "group/", e.g. #hardware.
   "modules-right": [
-    "mpd",
-    "idle_inhibitor",
-    "pulseaudio",
+    "group/controls",
     "network",
-    "power-profiles-daemon",
-    "cpu",
-    "custom/gpuinfo",
-    "memory",
-    "temperature",
-    "backlight",
-    "battery",
+    "group/hardware",
     "custom/bluetooth-devices",
-    "clock",
-    "tray",
-    "custom/power"
+    "group/applets",
+    "group/system"
   ],
+  "group/controls": {
+    "orientation": "inherit",
+    "modules": ["backlight", "pulseaudio"]
+  },
+  "group/hardware": {
+    "orientation": "inherit",
+    "modules": ["cpu", "temperature", "custom/gpuinfo", "memory"]
+  },
+  "group/applets": {
+    "orientation": "inherit",
+    "modules": ["idle_inhibitor", "tray", "custom/notification", "power-profiles-daemon"]
+  },
+  "group/system": {
+    "orientation": "inherit",
+    "modules": ["battery", "clock", "custom/power"]
+  },
+  "custom/notification": {
+    "format": "{icon}",
+    "format-icons": {
+      "notification": "󰂞",
+      "none": "󰂚",
+      "dnd-notification": "󰂛",
+      "dnd-none": "󰂛",
+      "inhibited-notification": "󰂞",
+      "inhibited-none": "󰂚",
+      "dnd-inhibited-notification": "󰂛",
+      "dnd-inhibited-none": "󰂛"
+    },
+    "tooltip": false,
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "escape": true
+  },
   "custom/bluetooth-devices": {
     "format": "{}",
     "exec": "sleep 1 && $HOME/.config/waybar/scripts/bluetooth-devices.sh",
     "interval": 10,
     "on-click": "foot bluetoothctl"
+  },
+  // "expand" gives the title all the space the other modules leave, and it is
+  // cut off with "…" only where that space ends. max-length is just a high cap
+  // (setting one is what enables the "…" truncation at all).
+  "sway/window": {
+    "format": "{title}",
+    "expand": true,
+    "max-length": 400,
+    "tooltip": false
   },
   "sway/mode": {
     "format": "<span style=\"italic\">{}</span>"
@@ -82,7 +127,7 @@
     "on-click": "$HOME/.config/waybar/scripts/toggle-suspend-inhibit.sh"
   },
   "tray": {
-    "icon-size": 21,
+    "icon-size": 18,
     "spacing": 10,
     "icons": {
       "blueman": "bluetooth",
@@ -96,6 +141,11 @@
     "format-alt": "{:%Y-%m-%d}"
   },
   "cpu": {
+    // Usage thresholds that add the .warning / .critical classes (style.css).
+    "states": {
+      "warning": 70,
+      "critical": 90
+    },
     "format": "{usage}% ",
     "on-click": "foot btop"
   },
@@ -103,6 +153,8 @@
     "format": "{}% "
   },
   "temperature": {
+    // Adds .warning / .critical, coloured like the cpu states (style.css).
+    "warning-threshold": 75,
     "critical-threshold": 90,
     "format": "{temperatureC}°C {icon}",
     "format-icons": [
@@ -120,7 +172,7 @@
   "battery": {
     "states": {
       "warning": 30,
-      "critica1": 15
+      "critical": 15
     },
     "format": "{capacity}% {icon}",
     "format-full": "{capacity}% {icon}",

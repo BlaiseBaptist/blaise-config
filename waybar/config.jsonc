@@ -17,7 +17,7 @@
     "height": 22,
     "spacing": 4,
     "tray": {
-      "icon-size": 15,
+      "icon-size": 13,
       "spacing": 7,
       "icons": {
         "blueman": "bluetooth",

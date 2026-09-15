@@ -8,12 +8,17 @@
        stay monospace, so {:>6} alignment is unaffected. */
       font-family: "MesloLGS Nerd Font Propo", monospace;
     /* font-family: FontAwesome, Roboto, Helvetica, Arial, sans-serif; */
-    font-size: 13px;
+    font-size: 14px;
 }
 
 window#waybar {
-    background-color: rgba(43, 48, 59, 0.5);
-    border-bottom: 3px solid rgba(100, 114, 125, 0.5);
+    background-color: #1b2636;
+    /* No bottom border: the pills filled the bar down over it, and a coloured
+       line directly above the focused titlebar merged the two. */
+    border-bottom: none;
+    /* 2px of the height sits above the pills, so they are not flush with the
+       top edge of the screen. */
+    padding-top: 2px;
     color: #ffffff;
     transition-property: background-color;
     transition-duration: .5s;
@@ -23,25 +28,11 @@ window#waybar.hidden {
     opacity: 0.2;
 }
 
-/*
-window#waybar.empty {
-    background-color: transparent;
-}
-window#waybar.solo {
-    background-color: #FFFFFF;
-}
-*/
-
-window#waybar.termite {
-    background-color: #3F3F3F;
-}
-
-window#waybar.chromium {
-    background-color: #000000;
-    border: none;
-}
-
 button {
+    /* GTK's default button min-height would hold the bar above "height". */
+    min-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
     /* Use box-shadow instead of border so the text isn't offset */
     box-shadow: inset 0 -3px transparent;
     /* Avoid rounded borders under each button name */
@@ -55,25 +46,23 @@ button:hover {
     box-shadow: inset 0 -3px #ffffff;
 }
 
-/* you can set a style on hover for any module like this */
-#pulseaudio:hover {
-    background-color: #a37800;
-}
-
+/* Blue #22577a is the active colour, slate #3b4654 the inactive one; sway's
+   window colours (~/.config/sway/config) use the same pair. */
 #workspaces button {
-    padding: 0 5px;
+    padding: 0 6px;
+    margin: 3px 1px;
     border-radius: 5px;
-    background-color: transparent;
+    background-color: #3b4654;
     color: #ffffff;
 }
 
 #workspaces button:hover {
-    background: rgba(0, 0, 0, 0.2);
+    background: #4b5866;
 }
 
 #workspaces button.focused {
-    background-color: #64727D;
-    box-shadow: inset 0 -3px #ffffff;
+    background-color: #22577a;
+    box-shadow: inset 0 -2px #5dade2;
 }
 
 #workspaces button.urgent {
@@ -85,32 +74,6 @@ button:hover {
     box-shadow: inset 0 -3px #ffffff;
 }
 
-#clock,
-#battery,
-#cpu,
-#memory,
-#disk,
-#temperature,
-#backlight,
-#network,
-#pulseaudio,
-#wireplumber,
-#custom-media,
-#tray,
-#mode,
-#idle_inhibitor,
-#scratchpad,
-#power-profiles-daemon,
-#custom-gpuinfo,
-#mpd,
-#language,
-#keyboard-state {
-    padding: 0 10px;
-    margin: 0 1px;
-    border-radius: 6px;
-    color: #ffffff;
-}
-
 #workspaces {
     border-radius: 6px;
 }
@@ -118,6 +81,13 @@ button:hover {
 #window,
 #workspaces {
     margin: 0 4px;
+}
+
+#window {
+    margin-left: 8px;
+    margin-right: 8px;
+    color: #c8d0d6;
+    font-size: 12px;
 }
 
 /* If workspaces is the leftmost module, omit left margin */
@@ -130,18 +100,172 @@ button:hover {
     margin-right: 0;
 }
 
-#clock {
-    background-color: #64727D;
+label:focus {
+    background-color: #000000;
+}
+
+/* ---- Pills ----------------------------------------------------------------
+ * Every right-side item is a pill with the same dark background. A group
+ * (group/<name> in modules.jsonc) is one pill holding several modules; the
+ * modules inside it have no background of their own and are told apart by an
+ * accent colour on their text. Background colour is reserved for states that
+ * need attention (critical battery, unread notifications, ...).
+ */
+
+#controls,
+#network,
+#hardware,
+#custom-bluetooth-devices,
+#applets,
+#system,
+#mode,
+#scratchpad,
+#custom-media {
+    /* Opaque and unpadded: Waybar names both a group's outer and inner box with
+       the group id, so a translucent or padded background draws twice and
+       shows a darker rounded shape inside the pill. */
+    background-color: #22303f;
+    border-radius: 6px;
+    padding: 0;
+    margin: 3px 1px;
+}
+
+#network,
+#custom-bluetooth-devices,
+#mode,
+#scratchpad,
+#custom-media {
+    padding: 0 10px;
+}
+
+#clock,
+#battery,
+#cpu,
+#memory,
+#temperature,
+#backlight,
+#pulseaudio,
+#tray,
+#idle_inhibitor,
+#power-profiles-daemon,
+#custom-gpuinfo,
+#custom-notification,
+#custom-power {
+    padding: 0 6px;
+    border-radius: 6px;
+    color: #ffffff;
+}
+
+/* controls: brightness, volume */
+/* idle inhibitor (applets) */
+/* The eye and eye-slash icons differ in width (14 vs 15px), so a fixed width
+   stops the pill resizing when it is toggled. */
+#idle_inhibitor {
+    color: #90b1b1;
+    min-width: 16px;
+}
+
+#idle_inhibitor.activated {
+    background-color: #22577a;
+    color: #ffffff;
+}
+
+#pulseaudio {
+    color: #f1c40f;
+}
+
+#pulseaudio:hover {
+    background-color: rgba(241, 196, 15, 0.2);
+}
+
+#pulseaudio.muted {
+    color: #7f8c8d;
+}
+
+#network {
+    color: #ffffff;
+    font-size: 13px;
+}
+
+#network.disconnected {
+    background-color: #f53c3c;
+    color: #ffffff;
+}
+
+/* power profile (applets) */
+/* The three profile icons have different advances in the Propo font, so a
+   fixed width stops the pill resizing each time a click cycles the profile. */
+#power-profiles-daemon {
+    min-width: 22px;
+}
+
+#power-profiles-daemon.performance {
+    background-color: #9b3232;
+    color: #ffffff;
+}
+
+#power-profiles-daemon.balanced {
+    background-color: #22577a;
+    color: #ffffff;
+}
+
+#power-profiles-daemon.power-saver {
+    background-color: #1e6b45;
+    color: #ffffff;
+}
+
+#cpu {
+    color: #5dade2;
+}
+
+#cpu.warning {
+    color: #f0932b;
+}
+
+#cpu.critical {
+    color: #f53c3c;
+}
+
+#custom-gpuinfo {
+    color: #76b900;
+}
+
+#custom-gpuinfo.off {
+    color: #7f8c8d;
+}
+
+#memory {
+    color: #bb8fce;
+}
+
+/* Same scheme as #cpu: blue normally, orange when warm, red when hot. */
+#temperature {
+    color: #5dade2;
+}
+
+#temperature.warning {
+    color: #f0932b;
+}
+
+#temperature.critical {
+    color: #f53c3c;
+}
+
+/* brightness (controls) and battery (system) */
+#backlight {
+    color: #90b1b1;
 }
 
 #battery {
-    background-color: #ffffff;
-    color: #000000;
+    color: #ffffff;
 }
 
 #battery.charging, #battery.plugged {
-    color: #ffffff;
-    background-color: #26A65B;
+    color: #2ecc71;
+}
+
+#battery.warning:not(.charging) {
+    color: #f0932b;
 }
 
 @keyframes blink {
@@ -162,101 +286,24 @@ button:hover {
     animation-direction: alternate;
 }
 
-#power-profiles-daemon.performance {
-    background-color: #f53c3c;
-    color: #ffffff;
+#custom-bluetooth-devices {
+    color: #5dade2;
 }
 
-#power-profiles-daemon.balanced {
-    background-color: #2980b9;
-    color: #ffffff;
-}
-
-#power-profiles-daemon.power-saver {
-    background-color: #2ecc71;
-    color: #000000;
-}
-
-label:focus {
-    background-color: #000000;
-}
-
-#cpu {
-    background-color: #2ecc71;
-    color: #000000;
-}
-
-#custom-gpuinfo {
-    background-color: #121212;
-    color: #ffffff;
-}
-
-
-#memory {
-    background-color: #8e44ad;
-}
-
-#disk {
-    background-color: #964B00;
-}
-
-#backlight {
-    background-color: #90b1b1;
-}
-
-#network {
-    background-color: #2980b9;
-    /* min-width: 250px; */
-}
-
-#network.disconnected {
-    background-color: #f53c3c;
-}
-
-#pulseaudio {
-    background-color: #f1c40f;
-    color: #000000;
-}
-
-#pulseaudio.muted {
-    background-color: #90b1b1;
-    color: #2a5c45;
-}
-
-#wireplumber {
-    background-color: #fff0f5;
-    color: #000000;
-}
-
-#wireplumber.muted {
-    background-color: #f53c3c;
-}
-
-#custom-media {
-    background-color: #66cc99;
-    color: #2a5c45;
-}
-
-#custom-media.custom-spotify {
-    background-color: #66cc99;
-}
-
-#custom-media.custom-vlc {
-    background-color: #ffa000;
-}
-
-#temperature {
-    background-color: #f0932b;
-}
-
-#temperature.critical {
+/* applets: idle inhibitor, tray, notification center, power profile */
+#custom-notification.notification,
+#custom-notification.inhibited-notification {
     background-color: #eb4d4b;
 }
 
-#tray {
-    background-color: #2980b9;
+#custom-notification.dnd-none,
+#custom-notification.dnd-notification,
+#custom-notification.dnd-inhibited-none,
+#custom-notification.dnd-inhibited-notification {
+    color: #7f8c8d;
 }
 
+/* system: battery, clock, power menu */
 #tray > .passive {
     -gtk-icon-effect: dim;
 }
@@ -266,92 +313,14 @@ label:focus {
     background-color: #eb4d4b;
 }
 
-#idle_inhibitor {
-    background-color: #2d3436;
+#custom-power {
+    color: #eb4d4b;
 }
 
-#idle_inhibitor.activated {
-    background-color: #ecf0f1;
-    color: #2d3436;
-}
-
-#mpd {
-    background-color: #66cc99;
-    color: #2a5c45;
-}
-
-#mpd.disconnected {
-    background-color: #f53c3c;
-}
-
-#mpd.stopped {
-    background-color: #90b1b1;
-}
-
-#mpd.paused {
-    background-color: #51a37a;
-}
-
-#language {
-    background: #00b093;
-    color: #740864;
-    padding: 0 5px;
-    margin: 0 1px;
-    min-width: 16px;
-}
-
-#keyboard-state {
-    background: #97e1ad;
-    color: #000000;
-    padding: 0 0px;
-    margin: 0 1px;
-    min-width: 16px;
-}
-
-#keyboard-state > label {
-    padding: 0 5px;
-}
-
-#keyboard-state > label.locked {
-    background: rgba(0, 0, 0, 0.2);
-}
-
-#scratchpad {
-    background: rgba(0, 0, 0, 0.2);
+#custom-media {
+    color: #66cc99;
 }
 
 #scratchpad.empty {
-	background-color: transparent;
-}
-
-#privacy {
-    padding: 0;
-}
-
-#privacy-item {
-    padding: 0 5px;
-    margin: 0 1px;
-    border-radius: 6px;
-    color: white;
-}
-
-#privacy-item.screenshare {
-    background-color: #cf5700;
-}
-
-#privacy-item.audio-in {
-    background-color: #1ca000;
-}
-
-#privacy-item.audio-out {
-    background-color: #0069d4;
-}
-#custom-bluetooth-devices {
-    color: #ffffff;
-    background-color: #1c71d8;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-left: 4px;
-    margin-right: 4px;
-    border-radius: 6px;
+    background-color: transparent;
 }
