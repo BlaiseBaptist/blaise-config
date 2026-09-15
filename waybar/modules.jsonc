@@ -179,6 +179,8 @@
     "format-charging": "{capacity}% ",
     "format-plugged": "{capacity}% ",
     "format-alt": "{time} {icon}",
+    // Time left for format-alt (click the battery): {m} is zero-padded minutes.
+    "format-time": "{H}:{m}",
     "format-icons": [
       "",
       "",
