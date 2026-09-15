@@ -199,6 +199,7 @@ bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
 # bindsym Print exec grim
 bindsym Print exec grim -g "$(slurp)"
 bindsym $mod+F7 exec grim -g "$(slurp -d)" - | tee ~/Pictures/screenshot.png | wl-copy --type image/png
+bindsym $mod+Shift+p exec ~/.local/bin/color-picker
 bindsym $mod+F1 exec playerctl previous
 bindsym $mod+F2 exec playerctl position 1-
 bindsym $mod+F3 exec playerctl play-pause
