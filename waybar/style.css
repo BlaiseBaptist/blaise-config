@@ -158,11 +158,8 @@ label:focus {
 
 /* controls: brightness, volume */
 /* idle inhibitor (applets) */
-/* The eye and eye-slash icons differ in width (14 vs 15px), so a fixed width
-   stops the pill resizing when it is toggled. */
 #idle_inhibitor {
     color: #90b1b1;
-    min-width: 16px;
 }
 
 #idle_inhibitor.activated {
@@ -193,12 +190,6 @@ label:focus {
 }
 
 /* power profile (applets) */
-/* The three profile icons have different advances in the Propo font, so a
-   fixed width stops the pill resizing each time a click cycles the profile. */
-#power-profiles-daemon {
-    min-width: 22px;
-}
-
 #power-profiles-daemon.performance {
     background-color: #9b3232;
     color: #ffffff;

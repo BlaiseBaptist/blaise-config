@@ -74,14 +74,6 @@ window#waybar.hidpi #clock, window#waybar.hidpi #battery, window#waybar.hidpi #c
     border-radius: 4px;
 }
 
-window#waybar.hidpi #power-profiles-daemon {
-    min-width: 16px;
-}
-
-window#waybar.hidpi #idle_inhibitor {
-    min-width: 12px;
-}
-
 window#waybar.hidpi #window {
     font-size: 8.8px;
     margin-left: 6px;
