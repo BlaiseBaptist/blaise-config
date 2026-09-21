@@ -14,7 +14,7 @@ exec keyd-application-mapper
 exec wl-paste --type text --watch cliphist store
 exec wl-paste --type image --watch cliphist store
 # Notification daemon + center; $mod+n toggles the panel, $mod+Shift+n toggles do-not-disturb.
-exec swaync
+exec env VK_DRIVER_FILES=/usr/share/vulkan/icd.d/intel_icd.json swaync
 bindsym $mod+n exec swaync-client -t -sw
 bindsym $mod+Shift+n exec swaync-client -d -sw
 set $background "/home/blaise/Pictures/RustFerrisBg.jpg"
