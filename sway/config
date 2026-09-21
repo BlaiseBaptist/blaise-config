@@ -88,7 +88,7 @@ input type:touchpad {
 input type:pointer {
 	dwt enabled
 	tap disabled
-	pointer_accel -0.5
+	pointer_accel -0.4
 	accel_profile "flat"
 }
 input "2:10:TPPS/2_Elan_TrackPoint" {
