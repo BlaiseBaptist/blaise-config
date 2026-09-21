@@ -312,6 +312,11 @@ label:focus {
     color: #66cc99;
 }
 
+/* Same hover tint as #pulseaudio, to mark the pill as clickable. */
+#custom-media:hover {
+    background-color: rgba(102, 204, 153, 0.2);
+}
+
 #scratchpad.empty {
     background-color: transparent;
 }

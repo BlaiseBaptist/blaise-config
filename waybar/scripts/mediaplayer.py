@@ -2,6 +2,14 @@
 import gi
 gi.require_version("Playerctl", "2.0")
 from gi.repository import Playerctl, GLib
+
+try:
+    # GLib.unix_signal_add still works but is deprecated and warns on stderr.
+    gi.require_version("GLibUnix", "2.0")
+    from gi.repository import GLibUnix
+    unix_signal_add = GLibUnix.signal_add
+except (ValueError, ImportError):
+    unix_signal_add = GLib.unix_signal_add
 from gi.repository.Playerctl import Player
 import argparse
 import logging
@@ -37,7 +45,25 @@ class PlayerManager:
         self.selected_player = selected_player
         self.excluded_player = excluded_player.split(',') if excluded_player else []
 
+        # The waybar module's right click sends SIGUSR1 to dismiss whatever is
+        # on the bar right now. GLib.unix_signal_add rather than signal.signal
+        # because a Python-level handler would not run until the main loop woke
+        # up on its own. The dismissal is remembered by track identity, so a
+        # pause/resume of the same track stays hidden while the next track (or
+        # a switch to another player) brings the pill back by itself.
+        self.current_identity = None
+        self.dismissed_identity = None
+        unix_signal_add(
+            GLib.PRIORITY_DEFAULT, signal.SIGUSR1, self.on_dismiss_requested)
+
         self.init_players()
+
+    def on_dismiss_requested(self):
+        logger.info(f"Dismiss requested for {self.current_identity}")
+        if self.current_identity is not None:
+            self.dismissed_identity = self.current_identity
+            self.clear_output()
+        return GLib.SOURCE_CONTINUE
 
     def init_players(self):
         for player in self.manager.props.player_names:
@@ -129,6 +155,20 @@ class PlayerManager:
                 track_info = " " + track_info
             else:
                 track_info = " " + track_info
+        # A track is identified by its mpris:trackid where the player supplies
+        # one, and by the text otherwise (some browsers omit the trackid).
+        trackid = metadata["mpris:trackid"] if "mpris:trackid" in metadata.keys() else None
+        identity = (player_name, str(trackid) if trackid else track_info)
+
+        if identity == self.dismissed_identity:
+            logger.debug(f"{identity} was dismissed, staying hidden")
+            self.current_identity = identity
+            self.clear_output()
+            return
+        # Anything else means a new track or player, so the dismissal lapses.
+        self.dismissed_identity = None
+        self.current_identity = identity
+
         # only print output if no other player is playing
         current_playing = self.get_first_playing_player()
         if current_playing is None or current_playing.props.player_name == player.props.player_name:

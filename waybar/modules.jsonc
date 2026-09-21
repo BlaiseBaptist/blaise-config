@@ -236,7 +236,25 @@
     "return-type": "json",
     "max-length": 100,
     "escape": true,
-    "exec": "$HOME/.config/waybar/scripts/mediaplayer.py 2> /dev/null"
+    "exec": "$HOME/.config/waybar/scripts/mediaplayer.py 2> /dev/null",
+    // playerctl with no -p acts on its first player, which is the same
+    // most-recently-active one mediaplayer.py picks to display, so the clicks
+    // control whatever the module is showing. Scroll seeks rather than changing
+    // volume; the volume pill on the right already owns that gesture.
+    //
+    // Right click dismisses the pill instead of skipping: SIGUSR1 tells the
+    // script to stop printing the current track, and it reappears on its own
+    // at the next track or player. There is no "previous track" binding; that
+    // is what freed up middle click for "next".
+    "on-click": "playerctl play-pause",
+    "on-click-middle": "playerctl next",
+    // Two things make the pattern this fussy. The "python3 " prefix keeps it
+    // off the /bin/sh wrapper waybar keeps around the script, which would
+    // otherwise take the signal and die, taking the module's output with it.
+    // The [m] keeps it off the shell waybar spawns to run this very command.
+    "on-click-right": "pkill -USR1 -f 'python3 .*waybar/scripts/[m]ediaplayer.py'",
+    "on-scroll-up": "playerctl position 10+",
+    "on-scroll-down": "playerctl position 10-"
   },
   "custom/power": {
     "format": "⏻ ",
