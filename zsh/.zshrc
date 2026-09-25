@@ -113,3 +113,6 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 export QT_QPA_PLATFORM="xcb"
 export PIPENV_USE_UV=1
 fastfetch
+
+# fleet LLM endpoint (blaises-mini)
+[ -f ~/.config/fleet-llm.env ] && . ~/.config/fleet-llm.env

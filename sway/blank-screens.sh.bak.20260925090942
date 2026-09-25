@@ -15,11 +15,6 @@
 # nothing to run `dpms on`, and the screens would stay dark.
 command -v swayidle >/dev/null || exit 1
 swaymsg "output * dpms off"
-#
-# before-sleep ends it too: its job is over once the machine suspends, and a
-# leftover blanker must not be around after wake re-blanking what
-# wake-outputs.sh just turned on.
 exec swayidle -w \
 	timeout 1 'swaymsg "output * dpms off"' \
-	resume "swaymsg 'output * dpms on'; kill $$" \
-	before-sleep "kill $$"
+	resume "swaymsg 'output * dpms on'; kill $$"

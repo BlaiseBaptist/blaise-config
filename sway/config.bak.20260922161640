@@ -59,14 +59,12 @@ assign [class="winedbg.exe" ] workspace 7
 # after-resume is driven by logind's PrepareForSleep, not by the lid switch, so
 # it unblanks on every wake even if the lid-open event never reaches sway. This
 # is the belt to the bindswitch braces below — on 2026-08-03 the panel was left
-# DPMS-off across a suspend and nothing turned it back on. wake-outputs.sh
-# retries until the outputs are really on: one swaymsg at the moment of resume
-# can land before sway has the GPU back (see the script).
+# DPMS-off across a suspend and nothing turned it back on.
 exec swayidle  \
 	timeout 310 'swaymsg "output * dpms off"' \
 	resume 'swaymsg "output * dpms off" && swaymsg "output * dpms on"' \
 	before-sleep 'waylock' \
-	after-resume '~/.config/sway/wake-outputs.sh'
+	after-resume 'swaymsg "output * dpms on"'
 exec ~/.config/sway/idle-inhibit-suspend-guard.sh
 # Lock, then blank the screens. -fork-on-lock returns only once the session is
 # actually locked, so the blank can never race ahead of the lock surface and
@@ -98,13 +96,6 @@ input "2:10:TPPS/2_Elan_TrackPoint" {
 	scroll_button BTN_MIDDLE
 	scroll_factor 0.5
 	scroll_button_lock enabled
-}
-
-input "6127:25215:Lenovo_Lenovo_Legion_M220_Wireless_RGB_Gaming_Mouse" {
-	scroll_factor 2.0
-}
-input "11836:50021:K686BG-RGB-M_Mouse" {
-	scroll_factor 2.0
 }
 
 input type:keyboard {
