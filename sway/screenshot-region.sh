@@ -50,4 +50,18 @@ read -r left top width height < <(echo "$geom" | awk -v ox="$ox" -v oy="$oy" -v 
 mkdir -p "$(dirname "$out")"
 vips crop "$tmp" "$out" "$left" "$top" "$width" "$height" || exit 1
 [ "$copy" = --copy ] && wl-copy --type image/png <"$out"
+
+# Notification previewing the shot; clicking it opens the image.
+# --copy reuses one path, so take a copy for the preview: a later shot would
+# otherwise change the image of an older notification still in swaync.
+preview=$(mktemp --tmpdir screenshot-preview.XXXXXX.png)
+cp "$out" "$preview"
+(
+	# Image only: swaync renders <img> in the body as a large preview.
+	action=$(notify-send -a Screenshot -A default=Open \
+		"" "<img src=\"$preview\" alt=\"Screenshot\"/>")
+	[ "$action" = default ] && xdg-open "$out"
+	rm -f "$preview"
+) >/dev/null 2>&1 &
+disown
 exit 0
