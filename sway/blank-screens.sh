@@ -18,8 +18,12 @@ swaymsg "output * dpms off"
 #
 # before-sleep ends it too: its job is over once the machine suspends, and a
 # leftover blanker must not be around after wake re-blanking what
-# wake-outputs.sh just turned on.
+# wake-outputs.sh just turned on. It powers the outputs back on first: killing
+# it bare left `output * dpms off` stored in sway's config, which every output
+# recreated on resume inherits (the 2026-09-25 19:24 black screen). The session
+# is already locked, so this only lights the lock screen for the moment before
+# suspend.
 exec swayidle -w \
 	timeout 1 'swaymsg "output * dpms off"' \
 	resume "swaymsg 'output * dpms on'; kill $$" \
-	before-sleep "kill $$"
+	before-sleep "swaymsg 'output * dpms on'; kill $$"
