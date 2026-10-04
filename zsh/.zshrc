@@ -101,8 +101,8 @@ export SUDO_EDITOR='hx'
 #
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
-export PATH="/home/blaise/gcc-arm-none-eabi-10.3-2021.10/bin:$HOME/.local/bin:$PATH:$PATH"
-export ISAAC_ROS_WS="/home/blaise/workspaces/isaac_ros-dev"
+export PATH="/home/blaise/opt/gcc-arm-none-eabi-10.3-2021.10/bin:$HOME/.local/bin:$PATH:$PATH"
+export ISAAC_ROS_WS="/home/blaise/workspaces/isaac_ros-jazzy"
 export QSYS_ROOTDIR="/home/blaise/.cache/paru/clone/quartus-free/pkg/quartus-free-quartus/opt/intelFPGA/25.1/quartus/sopc_builder/bin"
 
 # Added by Quartus Prime software
@@ -116,3 +116,6 @@ fastfetch
 
 # fleet LLM endpoint (blaises-mini)
 [ -f ~/.config/fleet-llm.env ] && . ~/.config/fleet-llm.env
+
+# thornbots tailnet (second tailscaled, userspace; robots only)
+alias tst='tailscale --socket=/run/tailscale-thornbots/tailscaled.sock'

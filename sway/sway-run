@@ -38,6 +38,22 @@ export PATH="$HOME/.local/bin:$PATH"
 # the sway config can't do this: it only sets it in a throwaway shell.
 export TERMINAL=foot
 
+# Debug-log sway to a file. Its stderr used to go to tty1, where nothing kept
+# it, so when eDP-1 got stuck after a dock pull + lid close + resume
+# (2026-09-30 11:09: wake-outputs gave up, sway said `success` to every
+# `output eDP-1 enable power on` and left it inactive) the reason was lost.
+# One timestamped log per session, the newest 20 kept; sway.log points at the
+# current one. Cut this back once the eDP-1 wake bug is solved.
+logdir="${XDG_STATE_HOME:-$HOME/.local/state}/sway"
+mkdir -p "$logdir"
+[ -f "$logdir/sway.log" ] && [ ! -L "$logdir/sway.log" ] &&
+	mv -f "$logdir/sway.log" "$logdir/sway-$(date -r "$logdir/sway.log" +%Y%m%d-%H%M%S).log"
+ls -1t "$logdir"/sway-*.log 2>/dev/null | tail -n +20 | xargs -r rm -f
+log="$logdir/sway-$(date +%Y%m%d-%H%M%S).log"
+ln -sfn "$(basename "$log")" "$logdir/sway.log"
+exec >"$log" 2>&1
+set -- -d "$@"
+
 # Never let a bad WLR_DRM_DEVICES cost a login: if sway dies within 10s of
 # starting, that is a startup failure rather than a real session, so retry once
 # with autodetect. A normal session always outlives this window.
