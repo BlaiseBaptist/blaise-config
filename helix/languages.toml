@@ -1,6 +1,6 @@
 [[language]]
-name = "sway"
-scope = "source.sway"
+name = "swayconfig"
+scope = "source.swayconfig"
 grammar = "bash"
 file-types = [{ glob = "**/sway/config" }, { glob = "**/i3/config" }]
 comment-token = "#"
@@ -11,7 +11,7 @@ language-servers = ["efm-sway"]
 command = "efm-langserver"
 [language-server.efm-sway.config]
 documentFormatting = false
-languages = { sway = [
+languages = { swayconfig = [
   { lintCommand = "sway -c ${INPUT} -C", lintStdin = false, lintFormats = [
     "Error on line %l %m (%f)",
   ] },
