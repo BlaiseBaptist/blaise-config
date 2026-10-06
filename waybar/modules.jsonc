@@ -34,7 +34,7 @@
   },
   "group/hardware": {
     "orientation": "inherit",
-    "modules": ["cpu", "temperature", "custom/gpuinfo", "memory"]
+    "modules": ["cpu", "temperature", "custom/fan-target", "custom/gpuinfo", "memory"]
   },
   "group/applets": {
     "orientation": "inherit",
@@ -157,14 +157,29 @@
     "warning-threshold": 75,
     "critical-threshold": 90,
     "format": "{temperatureC}°C {icon}",
+    "tooltip-format": "CPU: {temperatureC}°C",
     "format-icons": [
       "",
       "",
       ""
     ]
   },
+  "custom/fan-target": {
+    "format": "{text}",
+    "return-type": "json",
+    "exec": "$HOME/.config/waybar/scripts/fan-target.sh",
+    "interval": 1,
+    "tooltip": true,
+    "on-click": "$HOME/.config/waybar/scripts/fan-target.sh set-65",
+    "on-scroll-up": "$HOME/.config/waybar/scripts/fan-target.sh down",
+    "on-scroll-down": "$HOME/.config/waybar/scripts/fan-target.sh up"
+  },
   "backlight": {
     "format": "{percent}% {icon}",
+    "scroll-step": 0.25,
+    "reverse-scrolling": true,
+    "reverse-mouse-scrolling": true,
+    "on-click": "brightnessctl set 85%",
     "format-icons": [
       ""
     ]
@@ -210,6 +225,10 @@
     "interval": 1
   },
   "pulseaudio": {
+    "scroll-step": 0.25,
+    "reverse-scrolling": true,
+    "reverse-mouse-scrolling": true,
+    "on-click": "pavucontrol",
     "format": "{volume}% {icon} {format_source}",
     "format-bluetooth": "{volume}% {icon} {format_source}",
     "format-bluetooth-muted": " {icon} {format_source}",
@@ -253,8 +272,8 @@
     // otherwise take the signal and die, taking the module's output with it.
     // The [m] keeps it off the shell waybar spawns to run this very command.
     "on-click-right": "pkill -USR1 -f 'python3 .*waybar/scripts/[m]ediaplayer.py'",
-    "on-scroll-up": "playerctl position 10+",
-    "on-scroll-down": "playerctl position 10-"
+    "on-scroll-up": "playerctl position 2.5-",
+    "on-scroll-down": "playerctl position 2.5+"
   },
   "custom/power": {
     "format": "⏻ ",

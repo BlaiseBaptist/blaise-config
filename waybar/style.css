@@ -234,6 +234,22 @@ label:focus {
     color: #5dade2;
 }
 
+#custom-fan-target {
+    color: #5dade2;
+}
+
+#custom-fan-target:hover {
+    background-color: rgba(93, 173, 226, 0.2);
+}
+
+#custom-fan-target.warning {
+    color: #f0932b;
+}
+
+#custom-fan-target.critical {
+    color: #f53c3c;
+}
+
 #temperature.warning {
     color: #f0932b;
 }
