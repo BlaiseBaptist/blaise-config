@@ -37,7 +37,8 @@ workspace 6 output $monitor
 assign [app_id="zen" ] workspace 2
 assign [app_id="google-chrome" ] workspace 2
 assign [class="steam" ] workspace 5
-assign [app_id=".*[Cc]ode"] workspace 3
+assign [app_id=".*T3Code"] workspace 3
+assign [app_id=".*VSCode"] workspace 1
 assign [app_id="discord" ] workspace 4
 assign [class="rviz2" ] workspace 6
 assign [class="Free Download Manager"] workspace 5
@@ -233,20 +234,31 @@ bindsym $mod+asciitilde exec pkill -USR1 -f fpv-layer.py
 # focused = the blue focused-workspace button, inactive = the slate of the
 # other workspace buttons, urgent = the red used for alerts, background = the
 # navy bar. Indicator (split hint) is a lighter blue so it shows on the border.
+# Text matches bg so the shrunken stacked/tabbed headers are plain strips.
 #                       border  bg      text    indicator child_border
-client.focused          #22577a #22577a #ffffff #5dade2   #22577a
-client.focused_inactive #3b4654 #3b4654 #c8d0d6 #3b4654   #3b4654
-client.unfocused        #3b4654 #3b4654 #9aa5ae #3b4654   #3b4654
-client.urgent           #eb4d4b #eb4d4b #ffffff #eb4d4b   #eb4d4b
-client.placeholder      #1b2636 #1b2636 #ffffff #1b2636   #1b2636
+client.focused          #22577a #22577a #22577a #5dade2   #22577a
+client.focused_inactive #3b4654 #3b4654 #3b4654 #3b4654   #3b4654
+client.unfocused        #3b4654 #3b4654 #3b4654 #3b4654   #3b4654
+client.urgent           #eb4d4b #eb4d4b #eb4d4b #eb4d4b   #eb4d4b
+client.placeholder      #1b2636 #1b2636 #1b2636 #1b2636   #1b2636
 client.background       #1b2636
 
 # No titlebars on normal tiled/floating windows: the focused window's title is
-# shown in waybar instead, so the top of the screen is one bar. Tabbed and
-# stacked containers still draw their tabs. The 2px border carries the
-# focused/unfocused colours above.
-default_border pixel 2
-default_floating_border pixel 2
+# shown in waybar instead, so the top of the screen is one bar. The 3px border
+# carries the focused/unfocused colours above.
+default_border pixel 3
+default_floating_border pixel 3
+
+# Sway always draws headers for stacked/tabbed containers and has no option to
+# hide them, so shrink them to thin coloured strips instead: a 1pt font with
+# minimal padding and no titlebar border. The strips still show which entry is
+# focused. Waybar has its own font, so this only affects titlebars.
+# Zero vertical padding makes the strip 3px, matching default_border. Sway
+# rejects padding smaller than the titlebar border, so the border must be set
+# to 0 first.
+font pango:monospace 1
+titlebar_border_thickness 0
+titlebar_padding 1 0
 
 # Waybar runs on its own, not as a swaybar status_command. Under swaybar, every
 # `swaymsg reload` restarted swaybar, which owns the tray's
