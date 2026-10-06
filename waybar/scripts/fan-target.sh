@@ -7,7 +7,7 @@ target_file=/run/cpu-profile-limits/fan_start_temp
 minimum=30
 maximum=80
 step=1
-scroll_divisor=4
+scroll_divisor=1
 
 read_target() {
     value=$(cat "$target_file" 2>/dev/null || printf '52')
@@ -26,8 +26,9 @@ set_target() {
 
 case "${1:-show}" in
     up|down)
-        # Waybar starts one process per wheel event. Accumulate four events
-        # per direction before applying a 1°C change (25% sensitivity).
+        # Waybar starts one process per scroll event. Smooth touchpad events
+        # are rate-limited by the module's smooth-scrolling-threshold; a mouse
+        # wheel tick applies one 1°C change immediately.
         state_dir=${XDG_RUNTIME_DIR:?Waybar must set XDG_RUNTIME_DIR}
         mkdir -p "$state_dir/cpu-power-tuning"
         counter_file="$state_dir/cpu-power-tuning/fan-scroll-$1"

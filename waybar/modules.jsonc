@@ -171,15 +171,23 @@
     "interval": 1,
     "tooltip": true,
     "on-click": "$HOME/.config/waybar/scripts/fan-target.sh set-65",
-    "on-scroll-up": "$HOME/.config/waybar/scripts/fan-target.sh down",
-    "on-scroll-down": "$HOME/.config/waybar/scripts/fan-target.sh up"
+    "reverse-scrolling": true,
+    "reverse-mouse-scrolling": false,
+    "smooth-scrolling-threshold": 4,
+    "on-scroll-up": "$HOME/.config/waybar/scripts/fan-target.sh up",
+    "on-scroll-down": "$HOME/.config/waybar/scripts/fan-target.sh down"
   },
   "backlight": {
     "format": "{percent}% {icon}",
-    "scroll-step": 0.25,
     "reverse-scrolling": true,
-    "reverse-mouse-scrolling": true,
+    "reverse-mouse-scrolling": false,
+    "smooth-scrolling-threshold": 4,
     "on-click": "brightnessctl set 85%",
+    // Waybar's built-in scroll can reach raw 0, which switches the panel off.
+    // brightnessctl stops at raw 1 (its default --min-value). It ignores
+    // fractional percents, so a 1% step is written as raw 388 of 38787.
+    "on-scroll-up": "brightnessctl -q set 388+",
+    "on-scroll-down": "brightnessctl -q set 388-",
     "format-icons": [
       ""
     ]
@@ -225,9 +233,11 @@
     "interval": 1
   },
   "pulseaudio": {
-    "scroll-step": 0.25,
+    "scroll-step": 4,
+    "max-volume": 300,
     "reverse-scrolling": true,
-    "reverse-mouse-scrolling": true,
+    "reverse-mouse-scrolling": false,
+    "smooth-scrolling-threshold": 4,
     "on-click": "pavucontrol",
     "format": "{volume}% {icon} {format_source}",
     "format-bluetooth": "{volume}% {icon} {format_source}",
