@@ -236,6 +236,8 @@ label:focus {
 
 #custom-fan-target {
     color: #5dade2;
+    border-radius: 6px;
+    padding: 0 6px;
 }
 
 #custom-fan-target:hover {
@@ -261,6 +263,10 @@ label:focus {
 /* brightness (controls) and battery (system) */
 #backlight {
     color: #90b1b1;
+}
+
+#backlight:hover {
+    background-color: rgba(144, 177, 177, 0.2);
 }
 
 #battery {
