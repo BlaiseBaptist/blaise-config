@@ -68,6 +68,7 @@ exec swayidle  \
 	before-sleep 'waylock' \
 	after-resume '~/.config/sway/wake-outputs.sh'
 exec ~/.config/sway/idle-inhibit-suspend-guard.sh
+exec ~/.config/sway/media-idle-inhibit.sh
 # Lock, then blank the screens. -fork-on-lock returns only once the session is
 # actually locked, so the blank can never race ahead of the lock surface and
 # leave the desktop visible on the next keypress. blank-screens.sh is what
