@@ -64,7 +64,7 @@ assign [class="winedbg.exe" ] workspace 7
 # can land before sway has the GPU back (see the script).
 exec swayidle  \
 	timeout 310 'swaymsg "output * dpms off"' \
-	resume 'swaymsg "output * dpms off" && swaymsg "output * dpms on"' \
+	resume '~/.config/sway/idle-resume.sh' \
 	before-sleep 'waylock' \
 	after-resume '~/.config/sway/wake-outputs.sh'
 exec ~/.config/sway/idle-inhibit-suspend-guard.sh
