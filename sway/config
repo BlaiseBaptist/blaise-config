@@ -73,7 +73,10 @@ exec ~/.config/sway/media-idle-inhibit.sh
 # actually locked, so the blank can never race ahead of the lock surface and
 # leave the desktop visible on the next keypress. blank-screens.sh is what
 # brings the outputs back — a bare `dpms off` stays off through input.
-bindsym $mod+f9 exec waylock -fork-on-lock && ~/.config/sway/blank-screens.sh
+# --locked so the same key blanks again from the lock screen; when already
+# locked it skips straight to the blank (a second waylock would fail, and the
+# && would then never blank).
+bindsym --locked $mod+f9 exec pgrep -x waylock >/dev/null || waylock -fork-on-lock && ~/.config/sway/blank-screens.sh
 # bindswitch runs a sway command, not a shell command — `swaymsg "..."` here
 # parses as the unknown command `swaymsg` and silently does nothing, which is
 # how the lid could turn the panel off (via swayidle) but never turn it back on.
