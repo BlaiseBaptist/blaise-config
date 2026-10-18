@@ -30,19 +30,37 @@
   ],
   "group/controls": {
     "orientation": "inherit",
-    "modules": ["backlight", "pulseaudio"]
+    "modules": [
+      "backlight",
+      "pulseaudio"
+    ]
   },
   "group/hardware": {
     "orientation": "inherit",
-    "modules": ["cpu", "temperature", "custom/fan-target", "custom/gpuinfo", "memory"]
+    "modules": [
+      "cpu",
+      "temperature",
+      "custom/fan-target",
+      "custom/gpuinfo",
+      "memory"
+    ]
   },
   "group/applets": {
     "orientation": "inherit",
-    "modules": ["idle_inhibitor", "tray", "custom/notification", "power-profiles-daemon"]
+    "modules": [
+      "idle_inhibitor",
+      "tray",
+      "custom/notification",
+      "power-profiles-daemon"
+    ]
   },
   "group/system": {
     "orientation": "inherit",
-    "modules": ["battery", "clock", "custom/power"]
+    "modules": [
+      "battery",
+      "clock",
+      "custom/power"
+    ]
   },
   "custom/notification": {
     "format": "{icon}",
@@ -170,7 +188,7 @@
     "exec": "$HOME/.config/waybar/scripts/fan-target.sh",
     "interval": 1,
     "tooltip": true,
-    "on-click": "$HOME/.config/waybar/scripts/fan-target.sh set-65",
+    "on-click": "$HOME/.config/waybar/scripts/fan-target.sh set-default",
     "reverse-scrolling": true,
     "reverse-mouse-scrolling": false,
     "smooth-scrolling-threshold": 2,

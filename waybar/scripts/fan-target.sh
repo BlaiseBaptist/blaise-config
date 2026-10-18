@@ -45,8 +45,8 @@ case "${1:-show}" in
         fi
         printf '%s\n' "$count" > "$counter_file"
         ;;
-    set-65)
-        set_target 65
+    set-default)
+        set_target 50
         ;;
     show)
         current=$(read_target)
