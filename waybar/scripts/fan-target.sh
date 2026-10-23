@@ -10,8 +10,8 @@ step=1
 scroll_divisor=1
 
 read_target() {
-    value=$(cat "$target_file" 2>/dev/null || printf '52')
-    case "$value" in *[!0-9]*|'') value=52 ;; esac
+    value=$(cat "$target_file" 2>/dev/null || printf '50')
+    case "$value" in *[!0-9]*|'') value=50 ;; esac
     [ "$value" -ge "$minimum" ] || value=$minimum
     [ "$value" -le "$maximum" ] || value=$maximum
     printf '%s' "$value"
