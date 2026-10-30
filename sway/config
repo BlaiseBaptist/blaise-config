@@ -219,6 +219,8 @@ exec ~/.config/sway/brightness-sync.sh
 # Both freeze the screen at the keypress before slurp starts (screenshot-region.sh).
 bindsym Print exec ~/.config/sway/screenshot-region.sh ~/Pictures/$(date +%Y%m%d_%Hh%Mm%Ss)_grim.png
 bindsym $mod+F7 exec ~/.config/sway/screenshot-region.sh ~/Pictures/screenshot.png --copy
+# Same region picker, but copies the text in it (tesseract OCR); saves nothing.
+bindsym $mod+Ctrl+c exec ~/.config/sway/screenshot-region.sh --ocr
 # Screen recording toggle (screenrecord.sh): press again to stop. Saves to ~/Videos.
 bindsym $mod+Shift+F7 exec ~/.config/sway/screenrecord.sh region
 bindsym $mod+Ctrl+F7 exec ~/.config/sway/screenrecord.sh output --audio
@@ -240,31 +242,20 @@ bindsym $mod+asciitilde exec pkill -USR1 -f fpv-layer.py
 # focused = the blue focused-workspace button, inactive = the slate of the
 # other workspace buttons, urgent = the red used for alerts, background = the
 # navy bar. Indicator (split hint) is a lighter blue so it shows on the border.
-# Text matches bg so the shrunken stacked/tabbed headers are plain strips.
 #                       border  bg      text    indicator child_border
-client.focused          #22577a #22577a #22577a #5dade2   #22577a
-client.focused_inactive #3b4654 #3b4654 #3b4654 #3b4654   #3b4654
-client.unfocused        #3b4654 #3b4654 #3b4654 #3b4654   #3b4654
-client.urgent           #eb4d4b #eb4d4b #eb4d4b #eb4d4b   #eb4d4b
-client.placeholder      #1b2636 #1b2636 #1b2636 #1b2636   #1b2636
+client.focused          #22577a #22577a #ffffff #5dade2   #22577a
+client.focused_inactive #3b4654 #3b4654 #c8d0d6 #3b4654   #3b4654
+client.unfocused        #3b4654 #3b4654 #9aa5ae #3b4654   #3b4654
+client.urgent           #eb4d4b #eb4d4b #ffffff #eb4d4b   #eb4d4b
+client.placeholder      #1b2636 #1b2636 #ffffff #1b2636   #1b2636
 client.background       #1b2636
 
 # No titlebars on normal tiled/floating windows: the focused window's title is
-# shown in waybar instead, so the top of the screen is one bar. The 3px border
-# carries the focused/unfocused colours above.
+# shown in waybar instead, so the top of the screen is one bar. Tabbed and
+# stacked containers still draw their tabs, with titles. The 3px border carries
+# the focused/unfocused colours above.
 default_border pixel 3
 default_floating_border pixel 3
-
-# Sway always draws headers for stacked/tabbed containers and has no option to
-# hide them, so shrink them to thin coloured strips instead: a 1pt font with
-# minimal padding and no titlebar border. The strips still show which entry is
-# focused. Waybar has its own font, so this only affects titlebars.
-# Zero vertical padding makes the strip 3px, matching default_border. Sway
-# rejects padding smaller than the titlebar border, so the border must be set
-# to 0 first.
-font pango:monospace 1
-titlebar_border_thickness 0
-titlebar_padding 1 0
 
 # Waybar runs on its own, not as a swaybar status_command. Under swaybar, every
 # `swaymsg reload` restarted swaybar, which owns the tray's

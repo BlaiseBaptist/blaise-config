@@ -3,6 +3,10 @@
 #
 # Usage:
 #   screenshot-region.sh <output.png> [--copy]
+#   screenshot-region.sh --ocr
+#
+# --ocr saves nothing: the region is run through tesseract and the recognised
+# text is copied to the clipboard instead of the image.
 #
 # The whole layout is grabbed with grim before anything else starts, so menus
 # and tooltips that close on the next redraw are still in the shot. wayfreeze
@@ -13,6 +17,13 @@
 set -u
 out=$1
 copy=${2:-}
+ocr=
+if [ "$out" = --ocr ]; then
+	command -v tesseract >/dev/null ||
+		{ notify-send -a Screenshot "OCR needs tesseract and tesseract-data-eng"; exit 1; }
+	ocr=1
+	out=$(mktemp --suffix=.png)
+fi
 wayfreeze=$(command -v wayfreeze || echo "$HOME/.cargo/bin/wayfreeze")
 
 tmp=$(mktemp --suffix=.png)
@@ -20,6 +31,7 @@ freeze=
 cleanup() {
 	[ -n "$freeze" ] && kill "$freeze" 2>/dev/null
 	rm -f "$tmp" "$tmp.frozen"
+	[ -n "$ocr" ] && rm -f "$out" "$out.x3.png" "$out.grey.png" "$out.inv.png"
 }
 trap cleanup EXIT
 
@@ -49,6 +61,27 @@ read -r left top width height < <(echo "$geom" | awk -v ox="$ox" -v oy="$oy" -v 
 
 mkdir -p "$(dirname "$out")"
 vips crop "$tmp" "$out" "$left" "$top" "$width" "$height" || exit 1
+
+if [ -n "$ocr" ]; then
+	# tesseract reads screen-size text far better upscaled and in greyscale, and
+	# wants dark text on light, so dark themes are inverted.
+	vips resize "$out" "$out.x3.png" 3 --kernel cubic 2>/dev/null &&
+		vips colourspace "$out.x3.png" "$out.grey.png" b-w 2>/dev/null || exit 1
+	ocr_in=$out.grey.png
+	avg=$(vips avg "$ocr_in" 2>/dev/null)
+	if [ "${avg%.*}" -lt 128 ]; then
+		vips invert "$ocr_in" "$out.inv.png" 2>/dev/null && ocr_in=$out.inv.png
+	fi
+	# tesseract ends its output with a form feed; $() strips the trailing newlines.
+	text=$(tesseract "$ocr_in" - 2>/dev/null | tr -d '\f')
+	if [ -z "${text//[[:space:]]/}" ]; then
+		notify-send -a Screenshot "No text found"
+		exit 0
+	fi
+	printf '%s' "$text" | wl-copy
+	notify-send -a Screenshot "Text copied" "$(printf '%s' "$text" | head -c 300)"
+	exit 0
+fi
 [ "$copy" = --copy ] && wl-copy --type image/png <"$out"
 
 # Notification previewing the shot; clicking it opens the image.
