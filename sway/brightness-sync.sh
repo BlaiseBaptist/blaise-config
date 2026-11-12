@@ -12,10 +12,8 @@
 # display list is re-detected whenever a DRM connector's status changes (dock
 # plugged or pulled), and the current level is applied to whatever is new.
 #
-# At 0% the external outputs are powered off through sway (DDC brightness 0
-# only dims them; the panel itself goes dark at raw 0) and powered back on as
-# soon as the level rises. Only the transition acts, so wake-outputs.sh and
-# swayidle's resume are never fought over an output's power state.
+# DDC brightness 0 keeps external monitors on at their minimum brightness.
+# Output power is managed separately by swayidle and wake-outputs.sh.
 log() { logger -t brightness-sync "$*"; }
 
 command -v ddcutil >/dev/null || { log "ddcutil not installed"; exit 1; }
@@ -28,18 +26,6 @@ detect() {
 	ddcutil detect --terse 2>/dev/null |
 		awk '/^Display / { ok = 1 } /^Invalid display/ { ok = 0 }
 			ok && sub(/^ *I2C bus: *\/dev\/i2c-/, "") { print }'
-}
-
-externals() {
-	swaymsg -t get_outputs 2>/dev/null |
-		jq -r '.[] | select(.active and .name != "eDP-1") | .name'
-}
-
-set_power() {
-	for o in $(externals); do
-		swaymsg -q "output $o power $1"
-	done
-	log "external outputs power $1"
 }
 
 connectors() { cat /sys/class/drm/card*-*/status 2>/dev/null | tr '\n' ' '; }
@@ -60,11 +46,6 @@ while :; do
 		last=
 	fi
 	pct=$(( ($(cat "$bl/brightness") * 100 + max / 2) / max ))
-	if [ "$pct" = 0 ] && [ "$last" != 0 ]; then
-		set_power off
-	elif [ "$pct" != 0 ] && [ "$last" = 0 ]; then
-		set_power on
-	fi
 	if [ -n "$buses" ] && [ "$pct" != "$last" ]; then
 		for b in $buses; do
 			ddcutil --bus "$b" --noverify setvcp 10 "$pct" >/dev/null 2>&1 ||
