@@ -102,6 +102,8 @@ export SUDO_EDITOR='hx'
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 export PATH="/home/blaise/opt/gcc-arm-none-eabi-10.3-2021.10/bin:$HOME/.local/bin:$PATH:$PATH"
+export PATH="/opt/xpack-arm-none-eabi-gcc-14.2.1-1.1/bin:$PATH"
+export PATH="/opt/avr-gcc/bin:$PATH"
 export ISAAC_ROS_WS="/home/blaise/workspaces/isaac_ros-jazzy"
 export QSYS_ROOTDIR="/home/blaise/.cache/paru/clone/quartus-free/pkg/quartus-free-quartus/opt/intelFPGA/25.1/quartus/sopc_builder/bin"
 
