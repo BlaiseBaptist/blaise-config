@@ -202,10 +202,10 @@
     "smooth-scrolling-threshold": 4,
     "on-click": "brightnessctl set 85%",
     // Waybar's built-in scroll can reach raw 0, which switches the panel off.
-    // brightnessctl stops at raw 1 (its default --min-value). It ignores
-    // fractional percents, so a 1% step is written as raw 388 of 38787.
+    // --min-value=388 keeps it at 1% (raw 388 of 38787). brightnessctl ignores
+    // fractional percents, so a 1% step is also written as raw 388.
     "on-scroll-up": "brightnessctl -q set 388+",
-    "on-scroll-down": "brightnessctl -q set 388-",
+    "on-scroll-down": "brightnessctl -q --min-value=388 set 388-",
     "format-icons": [
       ""
     ]

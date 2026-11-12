@@ -106,6 +106,8 @@ input "2:10:TPPS/2_Elan_TrackPoint" {
 
 input "6127:25215:Lenovo_Lenovo_Legion_M220_Wireless_RGB_Gaming_Mouse" {
 	scroll_factor 2.0
+	pointer_accel -0.1
+	accel_profile "flat"
 }
 input "11836:50021:K686BG-RGB-M_Mouse" {
 	scroll_factor 2.0
@@ -208,10 +210,10 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 bindsym --locked XF86AudioMute exec pactl set-sink-mute \@DEFAULT_SINK@ toggle
-bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume \@DEFAULT_SINK@ -5%
-bindsym --locked XF86AudioRaiseVolume exec wpctl set-volume -l 3.0 @DEFAULT_AUDIO_SINK@ 5%+
+bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume \@DEFAULT_SINK@ -2%
+bindsym --locked XF86AudioRaiseVolume exec wpctl set-volume -l 3.0 @DEFAULT_AUDIO_SINK@ 2%+
 bindsym --locked XF86AudioMicMute exec pactl set-source-mute \@DEFAULT_SOURCE@ toggle
-bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
+bindsym --locked XF86MonBrightnessDown exec brightnessctl --min-value=388 set 5%-
 bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
 # Follows intel_backlight onto external monitors over DDC/CI, whatever set it.
 exec ~/.config/sway/brightness-sync.sh
