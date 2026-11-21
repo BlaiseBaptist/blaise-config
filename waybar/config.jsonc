@@ -40,7 +40,11 @@
       "HKC OVERSEAS LIMITED 27E1QA 0000000000001"
     ],
     "name": "littlearch",
-    // No Thinkfan fan target on this box.
+    // Desktop: no backlight to control, and no Thinkfan fan target.
+    "group/controls": {
+      "orientation": "inherit",
+      "modules": ["pulseaudio"]
+    },
     "group/hardware": {
       "orientation": "inherit",
       "modules": ["cpu", "temperature", "custom/gpuinfo", "memory"]
