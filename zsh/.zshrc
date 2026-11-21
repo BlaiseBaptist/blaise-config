@@ -2,7 +2,9 @@
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
 # Path to your Oh My Zsh installation.
+# oh-my-zsh lives in ~/.oh-my-zsh on archlinux and $ZDOTDIR/ohmyzsh on littlearch.
 export ZSH="$HOME/.oh-my-zsh"
+[ -d "$ZSH" ] || ZSH="$ZDOTDIR/ohmyzsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time Oh My Zsh is loaded, in which case,
@@ -112,6 +114,7 @@ export SALT_LICENSE_SERVER="/home/blaise/.altera.quartus/questa_lic.dat"
 export LM_LICENSE_FILE="/home/blaise/.altera.quartus/questa_lic.dat"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
+test -e "${ZDOTDIR}/.iterm2_shell_integration.zsh" && source "${ZDOTDIR}/.iterm2_shell_integration.zsh" || true
 export QT_QPA_PLATFORM="xcb"
 export PIPENV_USE_UV=1
 fastfetch

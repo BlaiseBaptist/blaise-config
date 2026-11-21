@@ -31,5 +31,30 @@
     "output": "eDP-1",
     "name": "lodpi",
     "include": ["/home/blaise/.config/waybar/modules.jsonc"]
+  },
+  {
+    // littlearch's two monitors, both at scale 1, so base metrics. A bar whose
+    // outputs aren't connected doesn't appear, so each box only shows its own.
+    "output": [
+      "HKC OVERSEAS LIMITED GN02 00000000",
+      "HKC OVERSEAS LIMITED 27E1QA 0000000000001"
+    ],
+    "name": "littlearch",
+    // No Thinkfan fan target on this box.
+    "group/hardware": {
+      "orientation": "inherit",
+      "modules": ["cpu", "temperature", "custom/gpuinfo", "memory"]
+    },
+    "temperature": {
+      // k10temp; hwmon numbering moves between boots, the PCI path doesn't.
+      "hwmon-path-abs": "/sys/devices/pci0000:00/0000:00:18.3/hwmon",
+      "input-filename": "temp1_input"
+    },
+    // Objects merge key by key with modules.jsonc, so only the overrides.
+    "custom/gpuinfo": {
+      "exec": "$HOME/.config/waybar/scripts/gpuinfo.sh 0000:03:00.0",
+      "on-click": "foot amdgpu_top"
+    },
+    "include": ["/home/blaise/.config/waybar/modules.jsonc"]
   }
 ]

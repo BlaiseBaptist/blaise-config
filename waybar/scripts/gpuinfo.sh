@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# With a PCI address argument (e.g. 0000:03:00.0), report that amdgpu card's
+# utilization straight from sysfs, which is cheap and doesn't wake anything.
+if [ -n "$1" ]; then
+	GPU_UTIL=$(cat "/sys/bus/pci/devices/$1/gpu_busy_percent" 2>/dev/null)
+	echo "{\"text\": \"${GPU_UTIL:-?}%\", \"tooltip\": \"GPU Utilization: ${GPU_UTIL:-unknown}%\"}"
+	exit 0
+fi
+
+# No argument: the archlinux NVIDIA dGPU.
 # Waybar runs this every second. Calling nvidia-smi wakes the dGPU, so doing it
 # every second keeps the dGPU from ever runtime-suspending. Read the power
 # state from sysfs instead (that doesn't wake it), and only query utilization

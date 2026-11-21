@@ -1,33 +1,46 @@
 #!/bin/sh
-# Pin the compositor to the Intel iGPU (PCI 00:02.0) — it owns every connector
-# on this machine (eDP-1, DP-1..5, HDMI-A-1). The nvidia dGPU (01:00.0) has no
-# connectors, so sway has no reason to open it; leaving it out keeps a failed
-# dGPU resume from taking down the session. Render offload (prime-run,
-# __NV_PRIME_RENDER_OFFLOAD) uses the nvidia render node directly and is
-# unaffected.
-#
-# WLR_DRM_DEVICES is a COLON-separated list, so a /dev/dri/by-path/... name
-# cannot be used literally — it contains colons and gets split into garbage
-# ("Could not canonicalize path /dev/dri/by-path/pci-0000"). Resolve the by-path
-# symlink to its /dev/dri/cardN target instead: selection stays keyed to the PCI
-# address (so cardN renumbering across boots can't pick the wrong GPU) while the
-# exported value stays colon-free.
-igpu=$(readlink -f /dev/dri/by-path/pci-0000:00:02.0-card 2>/dev/null)
-if [ -n "$igpu" ] && [ -e "$igpu" ]; then
-	export WLR_DRM_DEVICES="$igpu"
-fi
-# If it can't be resolved, leave WLR_DRM_DEVICES unset and let wlroots
-# autodetect rather than starting with a device list that cannot work.
+# GPU selection is per machine; everything after the case is shared.
+case "$(cat /etc/hostname)" in
+archlinux)
+	# Pin the compositor to the Intel iGPU (PCI 00:02.0) — it owns every connector
+	# on this machine (eDP-1, DP-1..5, HDMI-A-1). The nvidia dGPU (01:00.0) has no
+	# connectors, so sway has no reason to open it; leaving it out keeps a failed
+	# dGPU resume from taking down the session. Render offload (prime-run,
+	# __NV_PRIME_RENDER_OFFLOAD) uses the nvidia render node directly and is
+	# unaffected.
+	#
+	# WLR_DRM_DEVICES is a COLON-separated list, so a /dev/dri/by-path/... name
+	# cannot be used literally — it contains colons and gets split into garbage
+	# ("Could not canonicalize path /dev/dri/by-path/pci-0000"). Resolve the by-path
+	# symlink to its /dev/dri/cardN target instead: selection stays keyed to the PCI
+	# address (so cardN renumbering across boots can't pick the wrong GPU) while the
+	# exported value stays colon-free.
+	igpu=$(readlink -f /dev/dri/by-path/pci-0000:00:02.0-card 2>/dev/null)
+	if [ -n "$igpu" ] && [ -e "$igpu" ]; then
+		export WLR_DRM_DEVICES="$igpu"
+	fi
+	# If it can't be resolved, leave WLR_DRM_DEVICES unset and let wlroots
+	# autodetect rather than starting with a device list that cannot work.
 
-# WLR_DRM_DEVICES only limits KMS. wlroots still enumerates EGL devices, which
-# makes glvnd load libEGL_nvidia, and that holds /dev/nvidia0 open for the whole
-# session so the dGPU can never runtime-suspend (D3). Restrict EGL to Mesa for
-# sway and everything it launches. Vulkan is left alone so games still pick the
-# dGPU; ~/.local/bin/prime-run drops this variable for explicit offload.
-mesa_egl=/usr/share/glvnd/egl_vendor.d/50_mesa.json
-if [ -e "$mesa_egl" ]; then
-	export __EGL_VENDOR_LIBRARY_FILENAMES="$mesa_egl"
-fi
+	# WLR_DRM_DEVICES only limits KMS. wlroots still enumerates EGL devices, which
+	# makes glvnd load libEGL_nvidia, and that holds /dev/nvidia0 open for the whole
+	# session so the dGPU can never runtime-suspend (D3). Restrict EGL to Mesa for
+	# sway and everything it launches. Vulkan is left alone so games still pick the
+	# dGPU; ~/.local/bin/prime-run drops this variable for explicit offload.
+	mesa_egl=/usr/share/glvnd/egl_vendor.d/50_mesa.json
+	if [ -e "$mesa_egl" ]; then
+		export __EGL_VENDOR_LIBRARY_FILENAMES="$mesa_egl"
+	fi
+	;;
+littlearch)
+	# Drive the displays from the Radeon RX 6600 (03:00.0), not the Raphael
+	# iGPU (12:00.0). Same by-path resolution as above, for the same reason.
+	dgpu=$(readlink -f /dev/dri/by-path/pci-0000:03:00.0-card 2>/dev/null)
+	if [ -n "$dgpu" ] && [ -e "$dgpu" ]; then
+		export WLR_DRM_DEVICES="$dgpu"
+	fi
+	;;
+esac
 
 # Put ~/.local/bin first for the whole session, not only zsh (.zshenv), so
 # launches from rofi, waybar and Steam get the prime-run and btop wrappers too.

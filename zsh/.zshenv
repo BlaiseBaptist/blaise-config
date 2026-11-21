@@ -1,4 +1,4 @@
-. "$HOME/.cargo/env"
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 export TERMINAL=foot
 
 # ~/.local/bin for non-interactive shells too (t3 wrapper lives here).

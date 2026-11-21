@@ -8,7 +8,9 @@
             "additional_drivers_use_exclusively": true,
             "additional_drivers": [
                 { "path": "/usr/lib/pressure-vessel/overrides/share/vulkan/icd.d/intel_icd.json" },
-                { "path": "/usr/share/vulkan/icd.d/intel_icd.json" }
+                { "path": "/usr/share/vulkan/icd.d/intel_icd.json" },
+                { "path": "/usr/lib/pressure-vessel/overrides/share/vulkan/icd.d/radeon_icd.json" },
+                { "path": "/usr/share/vulkan/icd.d/radeon_icd.json" }
             ]
         }
     ]

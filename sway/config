@@ -13,26 +13,20 @@ exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec keyd-application-mapper
 exec wl-paste --type text --watch cliphist store
 exec wl-paste --type image --watch cliphist store
-# Notification daemon + center; $mod+n toggles the panel, $mod+Shift+n toggles do-not-disturb.
-exec env VK_DRIVER_FILES=/usr/share/vulkan/icd.d/intel_icd.json swaync
+# Notification center (swaync is started per host); $mod+n toggles the panel,
+# $mod+Shift+n toggles do-not-disturb.
 bindsym $mod+n exec swaync-client -t -sw
 bindsym $mod+Shift+n exec swaync-client -d -sw
 set $background "/home/blaise/Pictures/RustFerrisBg.jpg"
 output * bg $background fill
-
-set $monitor "HP Inc. HP U28 4K HDR 1CR20606PP"
-set $second_monitor "AOC 27G2WG3- 1TMP6HA010233"
-output eDP-1 resolution 1920x1200 position 0,0 scale 1
-output $monitor mode 3840x2160@59.997Hz scale 1.5
 exec waylock
 
-workspace 1 output eDP-1
-workspace 3 output eDP-1
-workspace 5 output eDP-1
-
-workspace 2 output $monitor
-workspace 4 output $monitor
-workspace 6 output $monitor
+# One branch for every machine: outputs, workspace-to-output pins, waybar,
+# swaync and other hardware-specific lines live in hosts/<hostname>.conf.
+# sway expands include paths with wordexp, so the command substitution picks
+# the file for this box (on `reload` too). A box with no file just gets sway's
+# defaults for those lines.
+include ~/.config/sway/hosts/$(cat /etc/hostname).conf
 
 assign [app_id="zen" ] workspace 2
 assign [app_id="google-chrome" ] workspace 2
