@@ -25,6 +25,14 @@ if [ "$STATE" != "active" ]; then
 	exit 0
 fi
 
+# nvidia-idle-off.service unloads the driver when the dGPU is idle so it can
+# power off. nvidia-smi would load it straight back (via nvidia-modprobe), so
+# never call it while the driver is unloaded; the card is off or about to be.
+if [ ! -d /sys/module/nvidia ]; then
+	echo "{\"text\": \"off\", \"tooltip\": \"NVIDIA GPU: driver unloaded (${STATE})\", \"class\": \"off\"}"
+	exit 0
+fi
+
 now=$(date +%s)
 if [ -f "$CACHE" ] && [ $((now - $(stat -c %Y "$CACHE"))) -lt $QUERY_EVERY ]; then
 	GPU_UTIL=$(cat "$CACHE")
