@@ -144,6 +144,7 @@ label:focus {
 #memory,
 #temperature,
 #backlight,
+#custom-ddc-brightness,
 #pulseaudio,
 #tray,
 #idle_inhibitor,
@@ -261,11 +262,13 @@ label:focus {
 }
 
 /* brightness (controls) and battery (system) */
-#backlight {
+#backlight,
+#custom-ddc-brightness {
     color: #90b1b1;
 }
 
-#backlight:hover {
+#backlight:hover,
+#custom-ddc-brightness:hover {
     background-color: rgba(144, 177, 177, 0.2);
 }
 

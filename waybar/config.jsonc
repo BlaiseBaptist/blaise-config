@@ -40,10 +40,28 @@
       "HKC OVERSEAS LIMITED 27E1QA 0000000000001"
     ],
     "name": "littlearch",
-    // Desktop: no backlight to control, and no Thinkfan fan target.
+    // Desktop: no backlight, so brightness goes to the monitors over DDC/CI
+    // (scripts/ddc-brightness.sh). No Thinkfan fan target either.
     "group/controls": {
       "orientation": "inherit",
-      "modules": ["pulseaudio"]
+      "modules": ["custom/ddc-brightness", "pulseaudio"]
+    },
+    "custom/ddc-brightness": {
+      "format": "{text} \uf185",
+      "return-type": "json",
+      "exec": "$HOME/.config/waybar/scripts/ddc-brightness.sh",
+      // Redrawn on every change by the script's `pkill -RTMIN+9`. The level is
+      // cached per session, so changes made with the monitors' own buttons
+      // show up after `rm -r $XDG_RUNTIME_DIR/ddc-brightness`.
+      "signal": 9,
+      "interval": "once",
+      "tooltip": true,
+      "on-click": "$HOME/.config/waybar/scripts/ddc-brightness.sh set 85",
+      "reverse-scrolling": true,
+      "reverse-mouse-scrolling": false,
+      "smooth-scrolling-threshold": 4,
+      "on-scroll-up": "$HOME/.config/waybar/scripts/ddc-brightness.sh up",
+      "on-scroll-down": "$HOME/.config/waybar/scripts/ddc-brightness.sh down"
     },
     "group/hardware": {
       "orientation": "inherit",
