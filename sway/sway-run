@@ -46,6 +46,12 @@ esac
 # launches from rofi, waybar and Steam get the prime-run and btop wrappers too.
 export PATH="$HOME/.local/bin:$PATH"
 
+# foot.ini includes host.ini for per-machine font settings; point it at this
+# machine's file (or the empty default) so the include always resolves.
+foot_host="$HOME/.config/foot/hosts/$(cat /etc/hostname).ini"
+[ -e "$foot_host" ] || foot_host="$HOME/.config/foot/hosts/default.ini"
+ln -sfn "$foot_host" "$HOME/.config/foot/host.ini"
+
 # Default terminal for anything launched from the session (rofi-sensible-terminal,
 # i3-sensible-terminal and friends read $TERMINAL). An `exec_always export` in
 # the sway config can't do this: it only sets it in a throwaway shell.

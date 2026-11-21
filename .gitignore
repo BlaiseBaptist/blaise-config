@@ -21,3 +21,4 @@ zsh/.zsh_history
 zsh/.zsh_sessions/
 zsh/ohmyzsh/
 zsh/.iterm2_shell_integration.zsh
+foot/host.ini
