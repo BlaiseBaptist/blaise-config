@@ -52,6 +52,11 @@ foot_host="$HOME/.config/foot/hosts/$(cat /etc/hostname).ini"
 [ -e "$foot_host" ] || foot_host="$HOME/.config/foot/hosts/default.ini"
 ln -sfn "$foot_host" "$HOME/.config/foot/host.ini"
 
+# greetd runs this with plain sh, not a login shell, so /etc/profile.d never
+# runs. Pull in flatpak's snippet so XDG_DATA_DIRS includes the flatpak
+# exports and rofi (drun), xdg-open and portals can see flatpak apps.
+[ -r /etc/profile.d/flatpak.sh ] && . /etc/profile.d/flatpak.sh
+
 # Default terminal for anything launched from the session (rofi-sensible-terminal,
 # i3-sensible-terminal and friends read $TERMINAL). An `exec_always export` in
 # the sway config can't do this: it only sets it in a throwaway shell.
